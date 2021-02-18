@@ -52,6 +52,21 @@ public class Person {
 	@Column(name = "blood_type")
 	private BloodType bloodType;
 	
+	
+	
+	protected Person() {}	
+		
+	public Person(String name, String lastname, String phoneNumber, Date dateOfBirth, Gender gender, String email,
+			BloodType bloodType) {
+		this.name = name;
+		this.lastname = lastname;
+		this.phoneNumber = phoneNumber;
+		this.dateOfBirth = dateOfBirth;
+		this.gender = gender;
+		this.email = email;
+		this.bloodType = bloodType;
+	}
+
 	public int getId() {
 		return id;
 	}
