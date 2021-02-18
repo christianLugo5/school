@@ -31,26 +31,26 @@ public class Person {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_person")
-	public int id;
+	private int id;
 		
-	public String name;
+	private String name;
 	
 	@Column(name = "last_name")
-	public String lastname;
-	public String curp;
-	public String rfc;
+	private String lastname;
+	private String curp;
+	private String rfc;
 	
 	@Column(name = "phone_number")
-	public String phoneNumber;
+	private String phoneNumber;
 	
 	@Column(name = "date_of_birth")
-	public Date dateOfBirth;
-	public Gender gender;
-	public String email;
-	public String allergy;
+	private Date dateOfBirth;
+	private Gender gender;
+	private String email;
+	private String allergy;
 	
 	@Column(name = "blood_type")
-	public BloodType bloodType;
+	private BloodType bloodType;
 	
 	public int getId() {
 		return id;
