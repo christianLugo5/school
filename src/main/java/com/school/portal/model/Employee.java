@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 enum EducationalAttainment{
 	DOCTORAL, PROFESSIONAL, MASTER, BACHELOR, HIGHSCHOOL;	
@@ -12,6 +13,9 @@ enum EducationalAttainment{
 @Entity
 public class Employee extends Person {
 	
+	@Id
+	@Column(name = "fk_person")
+	private int fkPerson;
 	private int salary;
 	@Column(name = "educational_attainment")
 	private EducationalAttainment educationalAttainment;
