@@ -1,5 +1,7 @@
 package com.school.portal.model;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,8 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "country_state")
@@ -16,17 +21,19 @@ public class State {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_state")
+	@Column(name = "state_id")
 	private int id;
 	private String state;
 	private String abbreviation;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "country_fk", referencedColumnName = "country_id")
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "country_fk", referencedColumnName = "country_id", nullable = false)
 	private Country country;
 
-	@OneToOne(mappedBy = "state")
-	private City city;
+	@JsonIgnore
+	@OneToMany(mappedBy = "state")
+	private Set<City> city;
 
 	private State() {
 	}
@@ -38,6 +45,10 @@ public class State {
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getState() {
@@ -64,11 +75,11 @@ public class State {
 		this.country = country;
 	}
 
-	public City getCity() {
+	public Set<City> getCity() {
 		return city;
 	}
 
-	public void setCity(City city) {
+	public void setCity(Set<City> city) {
 		this.city = city;
 	}
 

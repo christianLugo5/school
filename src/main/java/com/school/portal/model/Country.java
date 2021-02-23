@@ -1,12 +1,16 @@
 package com.school.portal.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "country")
@@ -19,19 +23,24 @@ public class Country {
 	private String name;
 	private String code;
 
-	@OneToOne(mappedBy = "country")
-	private State state;
+	@JsonIgnore
+	@OneToMany(mappedBy = "country")
+	private Set<State> state;
 
-	private Country() {
+	public Country() {
 	}
 
-	private Country(String name, String code) {
+	public Country(String name, String code) {
 		this.name = name;
 		this.code = code;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -50,11 +59,11 @@ public class Country {
 		this.code = code;
 	}
 
-	public State getState() {
+	public Set<State> getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(Set<State> state) {
 		this.state = state;
 	}
 
