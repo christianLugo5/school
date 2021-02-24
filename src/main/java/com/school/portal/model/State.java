@@ -1,8 +1,6 @@
 package com.school.portal.model;
 
 import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -25,13 +23,13 @@ public class State {
 	private int id;
 	private String state;
 	private String abbreviation;
-
+	
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "country_fk", referencedColumnName = "country_id", nullable = false)
 	private Country country;
-
-	@JsonIgnore
+	
+	@JsonBackReference
 	@OneToMany(mappedBy = "state")
 	private Set<City> city;
 

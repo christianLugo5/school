@@ -1,4 +1,4 @@
-package com.school.portal.model;
+package com.school.portal.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.portal.model.Country;
 import com.school.portal.repository.CountryRepository;
 
 @RestController

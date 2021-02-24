@@ -6,9 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
+//@Entity
 public class Student extends Person {
-
+/*
 	@Id
 	@Column(name = "fk_person")
 	private int fkPerson;
@@ -55,5 +55,5 @@ public class Student extends Person {
 	public void setRegistration(Date registration) {
 		this.registration = registration;
 	}
-
+*/
 }
