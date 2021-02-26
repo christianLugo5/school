@@ -5,14 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
+
+import com.sun.istack.NotNull;
 
 @Entity
 public class Subject {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_subject")
+	@Column(name = "subject_id")
 	private int id;
+	
+	@NotNull
+	@Size(min = 3, max = 120)
 	private String subject;
 
 	private Subject() {
@@ -31,7 +37,7 @@ public class Subject {
 	}
 
 	public void setSubject(String subject) {
-		this.subject = subject;
+		this.subject = subject.strip();
 	}
 
 }
