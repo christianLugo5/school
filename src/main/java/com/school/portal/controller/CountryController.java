@@ -1,9 +1,12 @@
 package com.school.portal.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,44 +17,56 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Country;
+import com.school.portal.model.assembler.CountryAssembler;
 import com.school.portal.repository.CountryRepository;
 
 @RestController
 public class CountryController {
 
-	@Autowired
-	private CountryRepository countryRepository;
+	private final CountryRepository repository;
+	private final CountryAssembler assembler;
 
-	@GetMapping("/country")
-	public List<Country> getAllCountries() {
-		return countryRepository.findAll();
+	public CountryController(CountryRepository countryRepository, CountryAssembler assembler) {
+		this.repository = countryRepository;
+		this.assembler = assembler;
 	}
 
-	@GetMapping("/country/{id}")
-	public ResponseEntity<Country> getCountryById(@PathVariable int id) {
-		return Optional.ofNullable(countryRepository.findById(id)).map(country -> ResponseEntity.ok().body(country)) // 200 OK
-				.orElseGet(() -> ResponseEntity.notFound().build()); // 404 Not found
+	@GetMapping("/countries")
+	public CollectionModel<EntityModel<Country>> all() {
+		List<EntityModel<Country>> countries = repository.findAll().stream().map(assembler::toModel)
+				.collect(Collectors.toList());
+
+		return CollectionModel.of(countries,
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CountryController.class).all()).withSelfRel());
 	}
 
-	@PostMapping("/country/add")
-	public void addCountry(@RequestBody Country country) {
-		if (country != null)
-			countryRepository.save(country);
+	@GetMapping("/countries/{id}")
+	public EntityModel<Country> one(@PathVariable int id) {
+		Country country = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		return assembler.toModel(country);
 	}
 
-	@PutMapping("/country/{id}")
-	public void updateCountryById(@RequestBody Country country, @PathVariable int id) {
-		if (id > 0 && id == country.getId()) {
-			if (countryRepository.existsById(id)) {
-				countryRepository.save(country);
-			}
-		}
+	@PostMapping("/countries")
+	public ResponseEntity<?> newCountry(@RequestBody Country country) {
+		EntityModel<Country> entityModel = assembler.toModel(repository.save(country));
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@DeleteMapping("/country/{id}")
-	public void deleteCountryById(@PathVariable int id) {
-		if (id > 0)
-			countryRepository.deleteById(id);
+	@PutMapping("/countries/{id}")
+	public ResponseEntity<?> replaceCountry(@RequestBody Country newCountry, @PathVariable int id) {
+		Country updatedCountry = repository.findById(id).map(country -> {
+			country = newCountry;
+			return repository.save(country);
+		}).orElseThrow(() -> new RuntimeException("Not found " + id));
+
+		EntityModel<Country> entityModel = assembler.toModel(updatedCountry);
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(updatedCountry);
+	}
+
+	@DeleteMapping("/countries/{id}")
+	public ResponseEntity<?> deleteCountry(@PathVariable int id) {
+		repository.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }

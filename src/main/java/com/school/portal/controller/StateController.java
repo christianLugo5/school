@@ -1,9 +1,12 @@
 package com.school.portal.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,63 +16,90 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.school.portal.model.Country;
 import com.school.portal.model.State;
-import com.school.portal.repository.CountryRepository;
+import com.school.portal.model.assembler.StateAssembler;
 import com.school.portal.repository.StateRepository;
 
 @RestController
 public class StateController {
 
-	@Autowired
-	private StateRepository stateRepository;
-	@Autowired
-	private CountryRepository countryRepository;
+	private final StateRepository repository;
+	private final StateAssembler assembler;
 
-	@GetMapping("/country/{id}/state")
-	public ResponseEntity<List<State>> getAllStatesByCountryId(@PathVariable int id) {
-		if(id > 0 )
-			return Optional.ofNullable(stateRepository.findAllByCountryId(id)).map(state -> ResponseEntity.ok().body(state))
-				.orElseGet(() -> ResponseEntity.notFound().build());
-		else
+	public StateController(StateRepository repository, StateAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;
+	}
+
+	@GetMapping("/countries/{id}/states")
+	public ResponseEntity<CollectionModel<EntityModel<State>>> all(@PathVariable int id) {
+		if (id < 1)
 			return ResponseEntity.notFound().build();
+			List<EntityModel<State>> states = repository.findAllByCountryId(id).stream().map(assembler::toModel)
+					.collect(Collectors.toList());
+			/*
+			 * return Optional.ofNullable(repository.findAllByCountryId(id)) .map(state ->
+			 * ResponseEntity.ok().body(state)).orElseGet(() ->
+			 * ResponseEntity.notFound().build());
+			 */
+			return ResponseEntity.ok(CollectionModel.of(states,
+					WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class).all(id)).withSelfRel()));
+
 	}
 
-	@GetMapping("/country/{countryId}/state/{stateId}")
-	public ResponseEntity<State> getStateById(@PathVariable int countryId, @PathVariable int stateId) {
-		if(stateId > 0)
-			return Optional.ofNullable(stateRepository.findById(stateId)).map(state -> ResponseEntity.ok().body(state))
-				.orElseGet(() -> ResponseEntity.notFound().build());
-		else
-			return ResponseEntity.notFound().build();
+	@GetMapping("/countries/{countryId}/states/{stateId}")
+	public EntityModel<State> one(@PathVariable int countryId, @PathVariable int stateId) {
+		/*
+		 * if (stateId > 0) return
+		 * Optional.ofNullable(repository.findById(stateId)).map(state ->
+		 * ResponseEntity.ok().body(state)) .orElseGet(() ->
+		 * ResponseEntity.notFound().build()); else return
+		 * ResponseEntity.notFound().build();
+		 */
+		State state = repository.findById(stateId).orElseThrow(() -> new RuntimeException("Not found " + stateId));
+		if (state.getCountry().getId() != countryId)
+			return null;// this should be response not found
+		return assembler.toModel(state);
 	}
 
-	@PostMapping("/country/{id}/state")
-	public void addState(@RequestBody State state, @PathVariable int id) {
-		if (id > 0 && state != null) {
-			Country country = countryRepository.findById(id);
-			if (country != null) {
-				state.setCountry(country);
-				stateRepository.save(state);
-			}
+	@PostMapping("/countries/{id}/states")
+	public ResponseEntity<?> newState(@RequestBody State state, @PathVariable int id) {
+		if (id > 0 && state.getCountry().getId() == id) {
+			EntityModel<State> entityModel = assembler.toModel(repository.save(state));
+			return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+					.body(entityModel);
 		}
+		return ResponseEntity.badRequest().build();
 	}
 
-	@PutMapping("/country/{countryId}/state/{stateId}")
-	public void updateState(@RequestBody State state, @PathVariable int countryId, @PathVariable int stateId) {
-		if (countryId > 0 && stateId > 0 && state.getId() == stateId) {
-			State temp = stateRepository.findById(stateId);
-			if (temp != null) {
-				state.setCountry(temp.getCountry());
-				stateRepository.save(state);
-			}
+	@PutMapping("/countries/{countryId}/states/{stateId}")
+	public ResponseEntity<?> replaceState(@RequestBody State newState, @PathVariable int countryId,
+			@PathVariable int stateId) {
+		if (countryId > 0 && stateId > 0 && newState.getId() == stateId && newState.getCountry().getId() == countryId) {
+			State updatedState = repository.findById(stateId).map(state -> {
+				state = newState;
+				return repository.save(state);
+			}).orElseThrow(() -> new RuntimeException("Not found " + stateId));
+
+			EntityModel<State> entityModel = assembler.toModel(updatedState);
+			return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+					.body(entityModel);
 		}
+		return ResponseEntity.notFound().build();
 	}
 
-	@DeleteMapping("/country/{countryId}/state/{stateId}")
-	public void deleteState(@PathVariable int countryId, @PathVariable int stateId) {
-		if (countryId > 0 && stateId > 0)
-			stateRepository.deleteById(stateId);
+	@DeleteMapping("/countries/{countryId}/states/{stateId}")
+	public ResponseEntity<?> deleteState(@PathVariable int countryId, @PathVariable int stateId) {
+		if (countryId > 0 && stateId > 0) {
+			try {
+				repository.deleteById(stateId);
+			} catch (Exception e) {
+				return ResponseEntity.notFound().build();
+			}
+			
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.notFound().build();
 	}
 
 }

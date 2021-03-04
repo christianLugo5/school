@@ -1,34 +1,36 @@
 package com.school.portal.model;
 
+import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Country {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "country_id")
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "country_id")
 	private int id;
+
+	@NotEmpty @Size(min = 3, max = 45)
 	private String name;
-	private String code;
 	
-	@JsonBackReference
+	@NotEmpty @Size(min = 1, max = 2)
+	private String code;
+
+	@JsonIgnore
 	@OneToMany(mappedBy = "country")
-	private Set<State> state;
+	private Set<State> state = new HashSet<>();
 
 	public Country() {
-	}
-
-	public Country(String name, String code) {
-		this.name = name;
-		this.code = code;
 	}
 
 	public int getId() {
@@ -44,7 +46,7 @@ public class Country {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.strip().replaceAll("\\s+", " ");
 	}
 
 	public String getCode() {
@@ -52,7 +54,7 @@ public class Country {
 	}
 
 	public void setCode(String code) {
-		this.code = code;
+		this.code = code.strip().replaceAll("\\s+", " ");
 	}
 
 	public Set<State> getState() {
@@ -61,6 +63,11 @@ public class Country {
 
 	public void setState(Set<State> state) {
 		this.state = state;
-	}	
+	}
+
+	@Override
+	public String toString() {
+		return "Country {id=" + id + ", name=" + name + ", code=" + code + ", state=" + state + "}";
+	}
 
 }

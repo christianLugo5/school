@@ -1,5 +1,6 @@
 package com.school.portal.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,35 +11,33 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "country_state")
 public class State {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "state_id")
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "state_id")
 	private int id;
+
+	@NotEmpty @Size(min = 2, max = 45)
 	private String state;
+
+	@NotEmpty @Size(min = 2, max = 5)
 	private String abbreviation;
-	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "country_fk", referencedColumnName = "country_id", nullable = false)
+
+	@NotNull
+	@ManyToOne @JoinColumn(name = "country_fk", referencedColumnName = "country_id")
 	private Country country;
-	
-	@JsonBackReference
+
+	@JsonIgnore
 	@OneToMany(mappedBy = "state")
-	private Set<City> city;
+	private Set<City> city = new HashSet<>();
 
-	private State() {
-	}
-
-	private State(String state, String abbreviation) {
-		this.state = state;
-		this.abbreviation = abbreviation;
+	public State() {
 	}
 
 	public int getId() {
@@ -54,7 +53,7 @@ public class State {
 	}
 
 	public void setState(String state) {
-		this.state = state;
+		this.state = state.strip().replaceAll("\\s+", " ");
 	}
 
 	public String getAbbreviation() {
@@ -62,7 +61,7 @@ public class State {
 	}
 
 	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
+		this.abbreviation = abbreviation.strip().replaceAll("\\s+", " ");
 	}
 
 	public Country getCountry() {
@@ -79,6 +78,12 @@ public class State {
 
 	public void setCity(Set<City> city) {
 		this.city = city;
+	}
+
+	@Override
+	public String toString() {
+		return "State {id=" + id + ", state=" + state + ", abbreviation=" + abbreviation + ", country=" + country
+				+ ", city=" + city + "}";
 	}
 
 }

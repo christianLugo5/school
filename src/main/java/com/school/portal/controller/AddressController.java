@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.school.portal.model.Address;
-import com.school.portal.model.City;
 import com.school.portal.repository.AddressRepository;
 import com.school.portal.repository.CityRepository;
+import com.school.portal.util.Views;
 
 @RestController
 public class AddressController {
@@ -27,45 +28,48 @@ public class AddressController {
 	@Autowired
 	CityRepository cityRepository;
 
+	@JsonView(Views.Simple.class)
 	@GetMapping("/country/{countryId}/state/{stateId}/city/{cityId}/address")
-	public List<Address> getAllAddressByCityId(@PathVariable int countryId, @PathVariable int stateId,@PathVariable int cityId) {
-		if(countryId > 0 && stateId > 0 && cityId > 0)
-			return addressRepository.findAllByCityId(cityId); 
+	public List<Address> getAllAddressByCityId(@PathVariable int countryId, @PathVariable int stateId,
+			@PathVariable int cityId) {
+		if (countryId > 0 && stateId > 0 && cityId > 0)
+			return addressRepository.findAllByCityId(cityId);
 		return new ArrayList<Address>();
 	};
 
+	@JsonView(Views.Simple.class)
 	@GetMapping("/country/{countryId}/state/{stateId}/city/{cityId}/address/{id}")
-	public ResponseEntity<Address> getAddressById(@PathVariable int countryId, @PathVariable int stateId,@PathVariable int cityId, 
-			@PathVariable int id) {
-		if(countryId > 0 && stateId > 0 && cityId > 0 && cityId > 0)
+	public ResponseEntity<Address> getAddressById(@PathVariable int countryId, @PathVariable int stateId,
+			@PathVariable int cityId, @PathVariable int id) {
+		if (countryId > 0 && stateId > 0 && cityId > 0 && cityId > 0)
 			return Optional.ofNullable(addressRepository.findById(id)).map(address -> ResponseEntity.ok().body(address))
-				.orElseGet(() -> ResponseEntity.notFound().build());
+					.orElseGet(() -> ResponseEntity.notFound().build());
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@PostMapping("/country/{countryId}/state/{stateId}/city/{cityId}/address")
-	public void addAddress(@PathVariable int countryId, @PathVariable int stateId,@PathVariable int cityId, 
+	public void addAddress(@PathVariable int countryId, @PathVariable int stateId, @PathVariable int cityId,
 			@RequestBody Address address) {
 		if (countryId > 0 && stateId > 0 && cityId > 0 && address != null) {
-			address.setCity(cityRepository.findById(cityId));
+			//address.setCity(cityRepository.findById(cityId));
 			addressRepository.save(address);
-		}			
+		}
 	}
 
 	@PutMapping("/country/{countryId}/state/{stateId}/city/{cityId}/address/{id}")
-	public void updateAddress(@RequestBody Address address, @PathVariable int countryId, @PathVariable int stateId, 
+	public void updateAddress(@RequestBody Address address, @PathVariable int countryId, @PathVariable int stateId,
 			@PathVariable int cityId, @PathVariable int id) {
 		if (countryId > 0 && stateId > 0 && cityId > 0 && id > 0 && id == address.getId()) {
-			City city = cityRepository.findById(cityId);
+			/*City city = cityRepository.findById(cityId);
 			if (city != null) {
 				address.setCity(city);
 				addressRepository.save(address);
-			}				
-		}			
+			}*/
+		}
 	}
 
 	@DeleteMapping("/country/{countryId}/state/{stateId}/city/{cityId}/address/{id}")
-	public void deleteAddress(@PathVariable int countryId, @PathVariable int stateId, @PathVariable int cityId, 
+	public void deleteAddress(@PathVariable int countryId, @PathVariable int stateId, @PathVariable int cityId,
 			@PathVariable int id) {
 		if (countryId > 0 && stateId > 0 && cityId > 0 && id > 0)
 			addressRepository.deleteById(id);

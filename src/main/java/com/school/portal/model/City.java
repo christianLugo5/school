@@ -1,5 +1,6 @@
 package com.school.portal.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -21,25 +24,24 @@ public class City {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "city_id")
 	private int id;
+
+	@NotEmpty
+	@Size(min = 2, max = 62)
 	private String city;
+
+	@NotEmpty
+	@Size(min = 2, max = 25)
 	private String abbreviation;
 
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "state_fk", referencedColumnName = "state_id", nullable = false)
 	private State state;
 
-	@JsonBackReference
+	@JsonIgnore
 	@OneToMany(mappedBy = "city")
-	private Set<Address> address;
+	private Set<Address> address = new HashSet<>();
 
 	protected City() {
-	}
-
-	public City(String city, String abbreviation, State state) {
-		this.city = city;
-		this.abbreviation = abbreviation;
-		this.state = state;
 	}
 
 	public int getId() {
@@ -55,7 +57,7 @@ public class City {
 	}
 
 	public void setCity(String city) {
-		this.city = city;
+		this.city = city.strip().replaceAll("\\s+", " ");
 	}
 
 	public String getAbbreviation() {
@@ -63,7 +65,7 @@ public class City {
 	}
 
 	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
+		this.abbreviation = abbreviation.strip().replaceAll("\\s+", " ");
 	}
 
 	public State getState() {
