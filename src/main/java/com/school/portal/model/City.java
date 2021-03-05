@@ -20,17 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "city_state")
 public class City {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "city_id")
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "city_id")
 	private int id;
 
-	@NotEmpty
-	@Size(min = 2, max = 62)
+	@NotEmpty @Size(min = 2, max = 62)
 	private String city;
 
-	@NotEmpty
-	@Size(min = 2, max = 25)
+	@NotEmpty @Size(min = 2, max = 25)
 	private String abbreviation;
 
 	@ManyToOne
@@ -41,7 +37,7 @@ public class City {
 	@OneToMany(mappedBy = "city")
 	private Set<Address> address = new HashSet<>();
 
-	protected City() {
+	public City() {
 	}
 
 	public int getId() {

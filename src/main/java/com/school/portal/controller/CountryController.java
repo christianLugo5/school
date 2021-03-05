@@ -3,12 +3,17 @@ package com.school.portal.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Positive;
+
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +26,7 @@ import com.school.portal.model.assembler.CountryAssembler;
 import com.school.portal.repository.CountryRepository;
 
 @RestController
+@Validated
 public class CountryController {
 
 	private final CountryRepository repository;
@@ -41,7 +47,7 @@ public class CountryController {
 	}
 
 	@GetMapping("/countries/{id}")
-	public EntityModel<Country> one(@PathVariable int id) {
+	public EntityModel<Country> one(@Positive @PathVariable int id) {
 		Country country = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
 		return assembler.toModel(country);
 	}
@@ -53,7 +59,7 @@ public class CountryController {
 	}
 
 	@PutMapping("/countries/{id}")
-	public ResponseEntity<?> replaceCountry(@RequestBody Country newCountry, @PathVariable int id) {
+	public ResponseEntity<?> replaceCountry(@RequestBody Country newCountry, @Positive @PathVariable int id) {
 		Country updatedCountry = repository.findById(id).map(country -> {
 			country = newCountry;
 			return repository.save(country);
@@ -64,9 +70,19 @@ public class CountryController {
 	}
 
 	@DeleteMapping("/countries/{id}")
-	public ResponseEntity<?> deleteCountry(@PathVariable int id) {
-		repository.deleteById(id);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<?> deleteCountry(@Positive @PathVariable int id) {
+		try {
+			repository.deleteById(id);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@ExceptionHandler
+	public String constraintViolationHandler(ConstraintViolationException ex){
+		return ex.getConstraintViolations().iterator().next()
+                .getMessage();
 	}
 
 }
