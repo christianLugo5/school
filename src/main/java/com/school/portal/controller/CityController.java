@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 import org.springframework.hateoas.CollectionModel;
@@ -56,7 +57,7 @@ public class CityController {
 	}
 
 	@PostMapping("/countries/{countryId}/states/{stateId}/cities")
-	public ResponseEntity<?> newCity(@RequestBody City newCity, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId) {
+	public ResponseEntity<?> newCity(@Valid @RequestBody City newCity, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId) {
 		if (newCity.getState().getId() != stateId || newCity.getState().getCountry().getId() != countryId)
 			return ResponseEntity.badRequest().build();
 				
@@ -65,7 +66,7 @@ public class CityController {
 	}
 
 	@PutMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}")
-	public ResponseEntity<?> replaceCity(@RequestBody City newCity, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
+	public ResponseEntity<?> replaceCity(@Valid @RequestBody City newCity, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId) {
 		if (newCity.getId() != cityId || newCity.getState().getId() != stateId || newCity.getState().getCountry().getId() != countryId)
 			return ResponseEntity.badRequest().build();

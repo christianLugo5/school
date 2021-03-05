@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 public class Address {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "address_id")
-	private int id;
+	private Integer id;
 
 	@NotNull
 	@ManyToOne
@@ -52,7 +52,7 @@ public class Address {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

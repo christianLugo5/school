@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 import org.springframework.hateoas.CollectionModel;
@@ -53,13 +54,13 @@ public class CountryController {
 	}
 
 	@PostMapping("/countries")
-	public ResponseEntity<?> newCountry(@RequestBody Country country) {
+	public ResponseEntity<?> newCountry(@Valid @RequestBody Country country) {
 		EntityModel<Country> entityModel = assembler.toModel(repository.save(country));
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
 	@PutMapping("/countries/{id}")
-	public ResponseEntity<?> replaceCountry(@RequestBody Country newCountry, @Positive @PathVariable int id) {
+	public ResponseEntity<?> replaceCountry(@Valid @RequestBody Country newCountry, @Positive @PathVariable int id) {
 		Country updatedCountry = repository.findById(id).map(country -> {
 			country = newCountry;
 			return repository.save(country);

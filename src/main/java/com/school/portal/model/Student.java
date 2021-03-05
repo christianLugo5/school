@@ -1,43 +1,39 @@
 package com.school.portal.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
-//@Entity
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+@Entity
 public class Student extends Person {
-/*
-	@Id
-	@Column(name = "fk_person")
-	private int fkPerson;
+
+	@NotEmpty
+	@Size(min = 10)
 	private String identifier;
-	private Date registration;
-
-	private Student() {
-	}
-
-	private Student(String name, String lastname, String phoneNumber, Date dateOfBirth, Gender gender, String email,
-			BloodType bloodType, int fkPerson, String identifier, Date registration) {
-		super(name, lastname, phoneNumber, dateOfBirth, gender, email, bloodType);
-		this.fkPerson = fkPerson;
-		this.identifier = identifier;
-		this.registration = registration;
-	}
-
-	private Student(int fkPerson, String identifier, Date registration) {
-		this.fkPerson = fkPerson;
-		this.identifier = identifier;
-		this.registration = registration;
-	}
-
-	public int getFkPerson() {
-		return fkPerson;
-	}
-
-	public void setFkPerson(int fkPerson) {
-		this.fkPerson = fkPerson;
+	
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private final LocalDateTime registration;
+	
+	@OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE)
+	private Set<Relative> relative = new HashSet<>();		
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	private Address address;
+	
+	public Student() {
+		registration = LocalDateTime.now();
 	}
 
 	public String getIdentifier() {
@@ -48,12 +44,26 @@ public class Student extends Person {
 		this.identifier = identifier;
 	}
 
-	public Date getRegistration() {
+	public LocalDateTime getRegistration() {
 		return registration;
 	}
 
-	public void setRegistration(Date registration) {
-		this.registration = registration;
+	public Address getAddress() {
+		return address;
 	}
-*/
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Set<Relative> getRelative() {
+		return relative;
+	}
+
+	public void setRelative(Set<Relative> relative) {
+		this.relative = relative;
+	}
+
+	
+	
 }

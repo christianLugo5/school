@@ -59,8 +59,8 @@ public class AddressController {
 	}
 
 	@PostMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses")
-	public ResponseEntity<?> newAddress(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId, @Positive @PathVariable int cityId,
-			@Valid @RequestBody Address newAddress) {
+	public ResponseEntity<?> newAddress(@Valid @RequestBody Address newAddress, @Positive @PathVariable int countryId, 
+			@Positive @PathVariable int stateId, @Positive @PathVariable int cityId) {
 		if (newAddress.getCity().getId() != cityId || newAddress.getCity().getState().getId() != stateId 
 				|| newAddress.getCity().getState().getCountry().getId() != countryId)
 			return ResponseEntity.badRequest().build();
@@ -69,7 +69,7 @@ public class AddressController {
 	}
 
 	@PutMapping("/cities/{countryId}/states/{stateId}/cities/{cityId}/addresses/{id}")
-	public ResponseEntity<?> replaceAddress(@RequestBody Address newAddress, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
+	public ResponseEntity<?> replaceAddress(@Valid @RequestBody Address newAddress, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId, @Positive @PathVariable int id) {
 		if (newAddress.getId() != id || newAddress.getCity().getId() != cityId || newAddress.getCity().getState().getId() != stateId 
 				|| newAddress.getCity().getState().getCountry().getId() != countryId)
