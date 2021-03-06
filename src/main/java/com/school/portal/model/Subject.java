@@ -5,9 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
-import com.sun.istack.NotNull;
 
 @Entity
 public class Subject {
@@ -17,19 +16,19 @@ public class Subject {
 	@Column(name = "subject_id")
 	private int id;
 	
-	@NotNull
+	@NotEmpty
 	@Size(min = 3, max = 120)
 	private String subject;
 
-	private Subject() {
-	}
-
-	private Subject(String subject) {
-		this.subject = subject;
+	public Subject() {
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getSubject() {
@@ -37,7 +36,7 @@ public class Subject {
 	}
 
 	public void setSubject(String subject) {
-		this.subject = subject.strip();
-	}
+		this.subject = subject;
+	}	
 
 }

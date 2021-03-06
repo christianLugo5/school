@@ -90,6 +90,8 @@ public class SchoolController {
 
 	@PutMapping("/schools/{id}")
 	public ResponseEntity<?> replaceSchool(@Valid @RequestBody School newSchool, @Positive @PathVariable int id) {
+		if(newSchool.getId() != id)
+			return ResponseEntity.badRequest().build();
 		School updatedSchool = repository.findById(id).map(school -> {
 			newSchool.getAddress().setId(school.getAddress().getId());
 			school = newSchool;
