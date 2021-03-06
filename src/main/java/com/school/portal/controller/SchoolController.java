@@ -24,12 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import com.school.portal.model.School;
 import com.school.portal.model.assembler.SchoolAssembler;
 import com.school.portal.repository.SchoolRespository;
-import com.school.portal.util.Views;
 
 @RestController
 @Validated
@@ -40,7 +37,6 @@ public class SchoolController {
 	@Autowired
 	SchoolAssembler assembler;
 
-	@JsonView(Views.Simple.class)
 	@GetMapping("/schools")
 	public ResponseEntity<CollectionModel<EntityModel<School>>> all(@RequestParam(required = false) Integer countryId,
 			@RequestParam(required = false) Integer stateId, @RequestParam(required = false) Integer cityId) {

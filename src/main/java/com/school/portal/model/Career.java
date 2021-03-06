@@ -1,12 +1,20 @@
 package com.school.portal.model;
 
-import java.util.Date;
-
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 enum CycleType {
 	SEMESTER, QUARTER;
@@ -17,33 +25,44 @@ public class Career {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_career")
+	@Column(name = "career_id")
 	private int id;
+
+	@NotEmpty
+	@Size(min = 3, max = 45)
 	private String career;
+
+	@NotEmpty
+	@Size(min = 3, max = 25)
 	private String identifier;
-	private Date start;
-	private Date end;
-	private boolean available;
+
+	@NotNull
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private LocalDateTime start;
+
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private LocalDateTime end;
+
+	@NotNull
+	private Boolean available;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	@Column(name = "cycle_type")
 	private CycleType cycleType;
+
+	@Positive
 	private byte max_duration;
 
-	private Career() {
-	}
-
-	private Career(String career, String identifier, Date start, Date end, boolean available, CycleType cycleType,
-			byte max_duration) {
-		this.career = career;
-		this.identifier = identifier;
-		this.start = start;
-		this.end = end;
-		this.available = available;
-		this.cycleType = cycleType;
-		this.max_duration = max_duration;
+	public Career() {
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCareer() {
@@ -51,7 +70,7 @@ public class Career {
 	}
 
 	public void setCareer(String career) {
-		this.career = career;
+		this.career = career.strip().replaceAll("\\s+", " ");
 	}
 
 	public String getIdentifier() {
@@ -59,30 +78,30 @@ public class Career {
 	}
 
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		this.identifier = identifier.strip().replaceAll("\\s+", " ");
 	}
 
-	public Date getStart() {
+	public LocalDateTime getStart() {
 		return start;
 	}
 
-	public void setStart(Date start) {
+	public void setStart(LocalDateTime start) {
 		this.start = start;
 	}
 
-	public Date getEnd() {
+	public LocalDateTime getEnd() {
 		return end;
 	}
 
-	public void setEnd(Date end) {
+	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
 
-	public boolean isAvailable() {
+	public Boolean getAvailable() {
 		return available;
 	}
 
-	public void setAvailable(boolean available) {
+	public void setAvailable(Boolean available) {
 		this.available = available;
 	}
 
