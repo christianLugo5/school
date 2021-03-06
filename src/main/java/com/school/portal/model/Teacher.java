@@ -1,41 +1,29 @@
 package com.school.portal.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
+import com.sun.istack.NotNull;
 
 @Entity
 public class Teacher extends Employee {
 
-	@Id
-	@Column(name = "fk_employee")
-	private int fkEmployee;
+	@PositiveOrZero
 	@Column(name = "experience_year")
 	private byte experienceYear;
+	
+	@NotEmpty
+	@Size(min = 3, max = 90)
 	@Column(name = "previous_job")
 	private String previousJob;
-	private boolean active;
+	
+	@NotNull
+	private Boolean active;
 
-	private Teacher() {
-	}
-
-	private Teacher(String name, String lastname, String phoneNumber, Date dateOfBirth, Gender gender, String email,
-			BloodType bloodType, int salary, EducationalAttainment educationalAttainment, String identifier,
-			byte experienceYear, String previousJob, boolean active) {
-		super(name, lastname, phoneNumber, dateOfBirth, gender, email, bloodType, salary, educationalAttainment,
-				identifier);
-		this.experienceYear = experienceYear;
-		this.previousJob = previousJob;
-		this.active = active;
-	}
-
-	private Teacher(int fkEmployee, byte experienceYear, String previousJob, boolean active) {
-		this.fkEmployee = fkEmployee;
-		this.experienceYear = experienceYear;
-		this.previousJob = previousJob;
-		this.active = active;
+	public Teacher() {
 	}
 
 	public byte getExperienceYear() {
@@ -51,15 +39,15 @@ public class Teacher extends Employee {
 	}
 
 	public void setPreviousJob(String previousJob) {
-		this.previousJob = previousJob;
+		this.previousJob = previousJob.strip();
 	}
 
-	public boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
-
+	
 }

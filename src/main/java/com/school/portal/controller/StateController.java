@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 import org.springframework.hateoas.CollectionModel;
@@ -67,7 +68,7 @@ public class StateController {
 	}
 
 	@PostMapping("/countries/{id}/states")
-	public ResponseEntity<?> newState(@RequestBody State state, @Positive @PathVariable int id) {
+	public ResponseEntity<?> newState(@Valid @RequestBody State state, @Positive @PathVariable int id) {
 		if (state.getCountry().getId() != id)
 			return ResponseEntity.badRequest().build();
 
@@ -76,7 +77,7 @@ public class StateController {
 	}
 
 	@PutMapping("/countries/{countryId}/states/{stateId}")
-	public ResponseEntity<?> replaceState(@RequestBody State newState, @Positive @PathVariable int countryId,
+	public ResponseEntity<?> replaceState(@Valid @RequestBody State newState, @Positive @PathVariable int countryId,
 			@Positive @PathVariable int stateId) {
 		if (newState.getId() != stateId || newState.getCountry().getId() != countryId)
 			return ResponseEntity.notFound().build();

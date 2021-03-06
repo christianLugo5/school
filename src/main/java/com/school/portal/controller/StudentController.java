@@ -65,7 +65,7 @@ public class StudentController {
 		
 		Student updatedStudent = repository.findById(id).map(student -> {
 			newStudent.setAddress(student.getAddress());
-			newStudent.setRelative(student.getRelative() == null ? null : student.getRelative());
+			newStudent.setRelative(student.getRelative());
 			student = newStudent;
 			return repository.save(student);
 		}).orElseThrow(() -> new RuntimeException("Not Found " + id));
@@ -98,8 +98,7 @@ public class StudentController {
 	
 	@ExceptionHandler
 	public String constraintViolationHandler(ConstraintViolationException ex){
-		return ex.getConstraintViolations().iterator().next()
-                .getMessage();
+		return ex.getConstraintViolations().iterator().next().getMessage();
 	}
 	
 }

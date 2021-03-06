@@ -1,10 +1,16 @@
 package com.school.portal.model;
 
-import java.util.Date;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 enum EducationalAttainment {
 	DOCTORAL, PROFESSIONAL, MASTER, BACHELOR, HIGHSCHOOL;
@@ -13,23 +19,23 @@ enum EducationalAttainment {
 @Entity
 public class Employee extends Person {
 
-	@Id
-	@Column(name = "fk_person")
-	private int fkPerson;
+	@PositiveOrZero
 	private int salary;
+	
+	@NotNull
 	@Column(name = "educational_attainment")
+	@Enumerated(EnumType.STRING)
 	private EducationalAttainment educationalAttainment;
+	
+	@NotEmpty
+	@Size(min = 10)
 	private String identifier;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	private Address address;
 
-	protected Employee() {
-	}
-
-	public Employee(String name, String lastname, String phoneNumber, Date dateOfBirth, Gender gender, String email,
-			BloodType bloodType, int salary, EducationalAttainment educationalAttainment, String identifier) {
-		super(name, lastname, phoneNumber, dateOfBirth, gender, email, bloodType);
-		this.salary = salary;
-		this.educationalAttainment = educationalAttainment;
-		this.identifier = identifier;
+	public Employee() {
 	}
 
 	public int getSalary() {
@@ -53,7 +59,15 @@ public class Employee extends Person {
 	}
 
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		this.identifier = identifier.strip();
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 }

@@ -41,7 +41,7 @@ public class Student extends Person {
 	}
 
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		this.identifier = identifier.strip();
 	}
 
 	public LocalDateTime getRegistration() {
