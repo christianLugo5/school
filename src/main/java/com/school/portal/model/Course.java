@@ -1,81 +1,109 @@
 package com.school.portal.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
-enum CourseType{
+import com.sun.istack.NotNull;
+
+enum CourseType {
 	SEMESTER, QUARTER;
 }
 
 @Entity
 public class Course {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_course")
+	@Column(name = "course_id")
 	private int id;
-	private String course;
-	private String identifier;
-	private boolean available;
 	
+	@NotEmpty
+	@Size(min = 3, max = 120)
+	private String course;
+	
+	@NotEmpty
+	@Size(min = 3,max = 25)
+	private String identifier;
+	
+	@NotNull
+	private Boolean available;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	@Column(name = "course_type")
 	private CourseType courseType;
+	
+	@NotNull
 	private int capacity;
-	private int price;
-	
-	private Course() {}
-	
-	private Course(String course, String identifier, boolean available, CourseType courseType, int capacity,
-			int price) {
-		this.course = course;
-		this.identifier = identifier;
-		this.available = available;
-		this.courseType = courseType;
-		this.capacity = capacity;
-		this.price = price;
+	@NotNull
+	private BigDecimal price;
+
+	public Course() {
 	}
-	
+
 	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getCourse() {
 		return course;
 	}
+
 	public void setCourse(String course) {
 		this.course = course;
 	}
+
 	public String getIdentifier() {
 		return identifier;
 	}
+
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
-	public boolean isAvailable() {
+
+	public Boolean getAvailable() {
 		return available;
 	}
-	public void setAvailable(boolean available) {
+
+	public void setAvailable(Boolean available) {
 		this.available = available;
 	}
+
 	public CourseType getCourseType() {
 		return courseType;
 	}
+
 	public void setCourseType(CourseType courseType) {
 		this.courseType = courseType;
 	}
+
 	public int getCapacity() {
 		return capacity;
 	}
+
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
-	public int getPrice() {
+
+	public BigDecimal getPrice() {
 		return price;
 	}
-	public void setPrice(int price) {
+
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
-			
+	
 }
