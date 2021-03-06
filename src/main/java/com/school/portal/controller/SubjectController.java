@@ -1,11 +1,21 @@
 package com.school.portal.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,47 +24,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Subject;
+import com.school.portal.model.assembler.SubjectAssembler;
 import com.school.portal.repository.SubjectRepository;
 
 @RestController
+@Validated
 public class SubjectController {
-	
+
 	@Autowired
-	SubjectRepository subjectRepo;
-	
-	@GetMapping("/subject")
-	public ResponseEntity<List<Subject>> getAllSubjects(){
-		List<Subject> subjects = subjectRepo.findAll();
-		if(subjects.size() > 0)
-			return ResponseEntity.ok().body(subjects);
-		else
-			return ResponseEntity.noContent().build();				
+	SubjectRepository repository;
+	@Autowired
+	SubjectAssembler assembler;
+
+	@GetMapping("/subjects")
+	public ResponseEntity<CollectionModel<EntityModel<Subject>>> all() {
+		List<EntityModel<Subject>> subjects = repository.findAll().stream().map(assembler::toModel)
+				.collect(Collectors.toList());
+		return ResponseEntity.ok(CollectionModel.of(subjects,
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SubjectController.class).all()).withSelfRel()));
 	}
-	
-	@GetMapping("/subject/{id}")
-	public ResponseEntity<Subject> getSubject(@PathVariable int id) {
-		if(id > 0)
-			return Optional.ofNullable(subjectRepo.findById(id)).map(subject -> ResponseEntity.ok().body(subject))
-				.orElseGet(() -> ResponseEntity.notFound().build());
-		else
+
+	@GetMapping("/subjects/{id}")
+	public ResponseEntity<EntityModel<Subject>> one(@Positive @PathVariable int id) {
+		Subject subject = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		return ResponseEntity.ok(assembler.toModel(subject));
+	}
+
+	@PostMapping("/subjects")
+	public ResponseEntity<?> newSubject(@Valid @RequestBody Subject subject) {
+		EntityModel<Subject> entityModel = assembler.toModel(repository.save(subject));
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+
+	@PutMapping("/subjects/{id}")
+	public ResponseEntity<?> replaceSubject(@Valid @RequestBody Subject subject, @Positive @PathVariable int id) {
+		if (id != subject.getId())
+			return ResponseEntity.badRequest().build();
+		EntityModel<Subject> entityModel = assembler.toModel(repository.save(subject));
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+
+	@DeleteMapping("/subjects/{id}")
+	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int id) {
+		try {
+			repository.deleteById(id);
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
+		}
 	}
-	
-	@PostMapping("/subject")
-	public void addSubject(@RequestBody Subject subject) {
-		subjectRepo.save(subject);
+
+	@ExceptionHandler
+	public String constraintViolationException(ConstraintViolationException ex) {
+		return ex.getConstraintViolations().iterator().next().getMessage();
 	}
-	
-	@PutMapping("/subject/{id}")
-	public void updateSubject(@RequestBody Subject subject, @PathVariable int id) {
-		if(id > 0 && id == subject.getId()) 
-			subjectRepo.save(subject);		
-	}
-	
-	@DeleteMapping("/subject/{id}")
-	public void deleteSubject(@PathVariable int id) {
-		if(id > 0)
-			subjectRepo.deleteById(id);
-	}
-	
+
 }
