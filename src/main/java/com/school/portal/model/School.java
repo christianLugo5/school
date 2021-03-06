@@ -1,37 +1,54 @@
 package com.school.portal.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class School {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_school")
+	@Column(name = "school_id")
 	private int id;
+
+	@NotEmpty
+	@Size(min = 2, max = 15)
 	private String identifier;
+
+	@NotEmpty
+	@Size(min = 3, max = 45)
 	private String name;
+
 	@Column(name = "is_headquarters")
-	private boolean isHeadquarters;
-	@Column(name = "fk_address")
-	private int fkAddress;
+	@NotNull
+	private Boolean isHeadquarters;
 
-	private School() {
-	}
+	@NotEmpty
+	@Size(min = 12, max = 12)
+	private String rfc;
 
-	private School(String identifier, String name, boolean isHeadquarters, int fkAddress) {
-		this.identifier = identifier;
-		this.name = name;
-		this.isHeadquarters = isHeadquarters;
-		this.fkAddress = fkAddress;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	private Address address;
+
+	public School() {
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getIdentifier() {
@@ -39,7 +56,7 @@ public class School {
 	}
 
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		this.identifier = identifier.strip();
 	}
 
 	public String getName() {
@@ -47,23 +64,31 @@ public class School {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.strip().replaceAll("\\s+", " ");
 	}
 
-	public boolean isHeadquarters() {
+	public Boolean getIsHeadquarters() {
 		return isHeadquarters;
 	}
 
-	public void setHeadquarters(boolean isHeadquarters) {
+	public void setIsHeadquarters(Boolean isHeadquarters) {
 		this.isHeadquarters = isHeadquarters;
 	}
 
-	public int getFkAddress() {
-		return fkAddress;
+	public String getRfc() {
+		return rfc;
 	}
 
-	public void setFkAddress(int fkAddress) {
-		this.fkAddress = fkAddress;
+	public void setRfc(String rfc) {
+		this.rfc = rfc.strip().replaceAll("\\s+", "");
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 }
