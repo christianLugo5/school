@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
@@ -37,6 +39,10 @@ public class Student extends Person {
 	@JsonIgnore
 	@OneToMany(mappedBy = "student")
 	private CourseStudent courseStudent;
+	
+	@ManyToMany
+	@JoinTable(name = "student_career", joinColumns = {@JoinColumn(name = "student_fk")}, inverseJoinColumns = {@JoinColumn(name = "career_fk")})
+	private Set<Career> career;
 	
 	public Student() {
 		registration = LocalDateTime.now();
@@ -77,5 +83,21 @@ public class Student extends Person {
 	public void setCourseStudent(CourseStudent courseStudent) {
 		this.courseStudent = courseStudent;
 	}
-		
+
+	public Set<Career> getCareer() {
+		return career;
+	}
+
+	public void setCareer(Set<Career> career) {
+		this.career = career;
+	}
+	
+	public void addCareer(Career career) {
+		this.career.add(career);
+	}
+	
+	public void removeCareer(int careerId) {
+		this.career.removeIf(career -> career.getId() == careerId);
+	}
+	
 }

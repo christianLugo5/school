@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -61,6 +62,10 @@ public class Course {
 	@JsonIgnore
 	@OneToMany(mappedBy = "course")
 	private CourseTeacher courseTeacher;
+	
+	@OneToOne
+	@JoinColumn(name = "course_fk", referencedColumnName = "course_id")
+	private Course previousCourse;
 
 	public Course() {
 	}
@@ -143,6 +148,14 @@ public class Course {
 
 	public void setCourseTeacher(CourseTeacher courseTeacher) {
 		this.courseTeacher = courseTeacher;
+	}
+
+	public Course getPreviousCourse() {
+		return previousCourse;
+	}
+
+	public void setPreviousCourse(Course previousCourse) {
+		this.previousCourse = previousCourse;
 	}
 		
 }
