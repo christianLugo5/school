@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,34 +15,35 @@ public class ReportCardDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_detail")
+	@Column(name = "detail_id")
 	private int id;
-	@Column(name = "fk_report_card")
-	private int reportCard;
+	
+	@ManyToOne
+	@JoinColumn(name = "report_card_fk", referencedColumnName = "report_card_id")
+	private ReportCard reportCard;
+	
 	private byte unit;
 	private byte grade;
+	
 	@Column(name = "is_complementary")
 	private boolean isComplementary;
 
-	private ReportCardDetail() {
-	}
-
-	private ReportCardDetail(int reportCard, byte unit, byte grade, boolean isComplementary) {
-		this.reportCard = reportCard;
-		this.unit = unit;
-		this.grade = grade;
-		this.isComplementary = isComplementary;
+	public ReportCardDetail() {
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public int getReportCard() {
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public ReportCard getReportCard() {
 		return reportCard;
 	}
 
-	public void setReportCard(int reportCard) {
+	public void setReportCard(ReportCard reportCard) {
 		this.reportCard = reportCard;
 	}
 
