@@ -1,38 +1,58 @@
 package com.school.portal.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Access {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_access")
+	@Column(name = "access_id")
 	private int id;
+	
+	@NotEmpty
+	@Size(min = 3, max = 128)
 	private String user;
-	@Column(name = "fk_person")
-	private int person;
+	
+	@NotNull
+	@OneToOne
+	@JoinColumn(name = "person_fk", referencedColumnName = "person_id")
+	private Person person;
+		
 	@Column(name = "last_login")
-	private Date lastLogin;
-	private Date created;
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private LocalDateTime lastLogin;
+	
+	@NotNull
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private LocalDateTime created;
+	
 	@Column(name = "wrong_login_attempt")
+	@PositiveOrZero
 	private int wrongLoginAttempt;
+	
+	@JsonIgnore
+	@OneToOne(mappedBy = "access")
+	private AccessPassword password;
 
-	private Access() {
-	}
-
-	private Access(String user, int person, Date lastLogin, Date created, int wrongLoginAttempt) {
-		this.user = user;
-		this.person = person;
-		this.lastLogin = lastLogin;
-		this.created = created;
-		this.wrongLoginAttempt = wrongLoginAttempt;
+	public Access() {
 	}
 
 	public int getId() {
@@ -51,27 +71,27 @@ public class Access {
 		this.user = user;
 	}
 
-	public int getPerson() {
+	public Person getPerson() {
 		return person;
 	}
 
-	public void setPerson(int person) {
+	public void setPerson(Person person) {
 		this.person = person;
 	}
 
-	public Date getLastLogin() {
+	public LocalDateTime getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
-	public Date getCreated() {
+	public LocalDateTime getCreated() {
 		return created;
 	}
 
-	public void setCreated(Date created) {
+	public void setCreated(LocalDateTime created) {
 		this.created = created;
 	}
 
@@ -81,6 +101,14 @@ public class Access {
 
 	public void setWrongLoginAttempt(int wrongLoginAttempt) {
 		this.wrongLoginAttempt = wrongLoginAttempt;
+	}
+
+	public AccessPassword getPassword() {
+		return password;
+	}
+
+	public void setPassword(AccessPassword password) {
+		this.password = password;
 	}
 
 }
