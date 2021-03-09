@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Course;
+import com.school.portal.model.Subject;
 import com.school.portal.model.assembler.CourseAssembler;
 import com.school.portal.repository.CourseRepository;
 
@@ -61,6 +62,7 @@ public class CourseController {
 		if(newCourse.getId() != id)
 			return ResponseEntity.badRequest().build();
 		Course updatedCourse = repository.findById(id).map(course -> {
+			newCourse.setSubject(newCourse.getSubject() == null ? course.getSubject() : newCourse.getSubject());
 			course = newCourse;
 			return repository.save(course);
 		})
@@ -70,11 +72,31 @@ public class CourseController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
+	@PutMapping("/courses/{id}/subjects")
+	public ResponseEntity<?> newSubject(@Valid @RequestBody Subject subject ,@Positive @PathVariable int id){
+		Course course = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		course.addSubject(subject);
+		EntityModel<Course> entityModel = assembler.toModel(repository.save(course));		
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+	
 	@DeleteMapping("/courses/{id}")
 	public ResponseEntity<?> deleteCourse(@Positive @PathVariable int id){
 		try {
 			repository.deleteById(id);
 			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@DeleteMapping("/courses/{courseId}/subjects/{subjectId}")
+	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int courseId, @Positive @PathVariable int subjectId){
+		try {
+			Course course = repository.findById(courseId).orElseThrow(() -> new RuntimeException("Not found"));
+			course.removeSubject(subjectId);
+			repository.save(course);
+			return ResponseEntity.ok().build();
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}

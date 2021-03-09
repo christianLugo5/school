@@ -1,6 +1,8 @@
 package com.school.portal.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +11,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.sun.istack.NotNull;
 
 enum CourseType {
 	SEMESTER, QUARTER;
@@ -46,6 +50,10 @@ public class Course {
 	private int capacity;
 	@NotNull
 	private BigDecimal price;
+	
+	@ManyToMany
+	@JoinTable(name = "course_subject", joinColumns = {@JoinColumn(name = "course_id")}, inverseJoinColumns = {@JoinColumn(name = "subject_id")})	
+	private Set<Subject> subject = new HashSet<Subject>();
 
 	public Course() {
 	}
@@ -104,6 +112,22 @@ public class Course {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public Set<Subject> getSubject() {
+		return subject;
+	}
+
+	public void setSubject(Set<Subject> subject) {
+		this.subject = subject;
+	}
+
+	public void addSubject(Subject subject) {
+		this.subject.add(subject);
+	}	
+	
+	public void removeSubject(int subjectId) {
+		this.subject.removeIf(sub -> sub.getId()==subjectId);
 	}
 	
 }
