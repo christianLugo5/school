@@ -7,7 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "student_course_payment_detail")
@@ -15,44 +21,53 @@ public class PaymentDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_detail")
+	@Column(name = "detail_id")
 	private int id;
-	@Column(name = "fk_course_teacher_student")
-	private int teacherStudent;
-	@Column(name = "fk_payment")
-	private int payment;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "course_teacher_student_fk")
+	private CourseStudent courseStudent;
+	
+	@JsonIgnore
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "payment_fk", referencedColumnName = "payment_id")
+	private Payment payment;
+	
+	@PositiveOrZero
 	private BigDecimal price;
+	
+	@PositiveOrZero
 	private BigDecimal discount;
+	
+	@PositiveOrZero
 	private BigDecimal total;
 
-	private PaymentDetail() {
-	}
-
-	private PaymentDetail(int teacherStudent, int payment, BigDecimal price, BigDecimal discount, BigDecimal total) {
-		this.teacherStudent = teacherStudent;
-		this.payment = payment;
-		this.price = price;
-		this.discount = discount;
-		this.total = total;
+	public PaymentDetail() {
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public int getTeacherStudent() {
-		return teacherStudent;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setTeacherStudent(int teacherStudent) {
-		this.teacherStudent = teacherStudent;
+	public CourseStudent getCourseStudent() {
+		return courseStudent;
 	}
 
-	public int getPayment() {
+	public void setCourseStudent(CourseStudent courseStudent) {
+		this.courseStudent = courseStudent;
+	}
+
+	public Payment getPayment() {
 		return payment;
 	}
 
-	public void setPayment(int payment) {
+	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
 

@@ -1,14 +1,25 @@
 package com.school.portal.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 enum PaymentStatus {
 	CREATED, CHECKED, PAID, CANCELLED;
@@ -22,50 +33,64 @@ public class Payment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_payment")
 	private int id;
+	
+	@Positive
 	@Column(name = "total_courses")
 	private byte totalCourses;
-	private Date creation;
+	
+	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
+	private LocalDate creation;
+	
+	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
 	private Date expiration;
+	
+	@NotNull
+	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
-	private Date payment;
+	
+	@DateTimeFormat(iso = ISO.DATE_TIME)
+	private LocalDateTime payment;
+	
 	private String reference;
+	
+	@PositiveOrZero
 	private BigDecimal subtotal;
+	
+	@PositiveOrZero
 	private BigDecimal dicount;
+	
+	@PositiveOrZero
 	private BigDecimal total;
+	
+	@OneToMany(mappedBy = "payment")
+	private PaymentDetail detail;
 
-	private Payment() {
-	}
-
-	private Payment(byte totalCourses, Date creation, Date expiration, PaymentStatus status, Date payment,
-			String reference, BigDecimal subtotal, BigDecimal dicount, BigDecimal total) {
-		this.totalCourses = totalCourses;
-		this.creation = creation;
-		this.expiration = expiration;
-		this.status = status;
-		this.payment = payment;
-		this.reference = reference;
-		this.subtotal = subtotal;
-		this.dicount = dicount;
-		this.total = total;
+	public Payment() {
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public byte getTotal_courses() {
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public byte getTotalCourses() {
 		return totalCourses;
 	}
 
-	public void setTotal_courses(byte total_courses) {
-		this.totalCourses = total_courses;
+	public void setTotalCourses(byte totalCourses) {
+		this.totalCourses = totalCourses;
 	}
 
-	public Date getCreation() {
+	public LocalDate getCreation() {
 		return creation;
 	}
 
-	public void setCreation(Date creation) {
+	public void setCreation(LocalDate creation) {
 		this.creation = creation;
 	}
 
@@ -85,11 +110,11 @@ public class Payment {
 		this.status = status;
 	}
 
-	public Date getPayment() {
+	public LocalDateTime getPayment() {
 		return payment;
 	}
 
-	public void setPayment(Date payment) {
+	public void setPayment(LocalDateTime payment) {
 		this.payment = payment;
 	}
 
@@ -125,4 +150,12 @@ public class Payment {
 		this.total = total;
 	}
 
+	public PaymentDetail getDetail() {
+		return detail;
+	}
+
+	public void setDetail(PaymentDetail detail) {
+		this.detail = detail;
+	}
+		
 }
