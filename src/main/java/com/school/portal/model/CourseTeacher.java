@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "course_teacher")
 public class CourseTeacher {
@@ -47,6 +49,10 @@ public class CourseTeacher {
 	
 	@NotNull
 	private Boolean available;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "courseTeacher")
+	private CourseStudent courseStudent;
 
 	public CourseTeacher() {
 	}
@@ -105,6 +111,14 @@ public class CourseTeacher {
 
 	public void setAvailable(Boolean available) {
 		this.available = available;
+	}
+
+	public CourseStudent getCourseStudent() {
+		return courseStudent;
+	}
+
+	public void setCourseStudent(CourseStudent courseStudent) {
+		this.courseStudent = courseStudent;
 	}	
 	
 }

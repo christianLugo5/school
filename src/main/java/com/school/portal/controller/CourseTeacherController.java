@@ -3,6 +3,7 @@ package com.school.portal.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
@@ -14,6 +15,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,6 +78,11 @@ public class CourseTeacherController {
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	@ExceptionHandler
+	public String constraintViolationException(ConstraintViolationException ex) {
+		return ex.getConstraintViolations().iterator().next().getMessage();
 	}
 	
 }

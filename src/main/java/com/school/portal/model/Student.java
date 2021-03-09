@@ -15,6 +15,8 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Student extends Person {
 
@@ -31,6 +33,10 @@ public class Student extends Person {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
 	private Address address;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "student")
+	private CourseStudent courseStudent;
 	
 	public Student() {
 		registration = LocalDateTime.now();
@@ -64,6 +70,12 @@ public class Student extends Person {
 		this.relative = relative;
 	}
 
-	
-	
+	public CourseStudent getCourseStudent() {
+		return courseStudent;
+	}
+
+	public void setCourseStudent(CourseStudent courseStudent) {
+		this.courseStudent = courseStudent;
+	}
+		
 }
