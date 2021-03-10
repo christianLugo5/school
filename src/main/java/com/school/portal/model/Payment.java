@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +33,7 @@ public class Payment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_payment")
+	@Column(name = "payment_id")
 	private int id;
 	
 	@Positive
@@ -65,7 +67,7 @@ public class Payment {
 	private BigDecimal total;
 	
 	@OneToMany(mappedBy = "payment")
-	private PaymentDetail detail;
+	private Set<PaymentDetail> detail = new HashSet<PaymentDetail>();
 
 	public Payment() {
 	}
@@ -150,12 +152,12 @@ public class Payment {
 		this.total = total;
 	}
 
-	public PaymentDetail getDetail() {
+	public Set<PaymentDetail> getDetail() {
 		return detail;
 	}
 
-	public void setDetail(PaymentDetail detail) {
+	public void setDetail(Set<PaymentDetail> detail) {
 		this.detail = detail;
 	}
-		
+			
 }

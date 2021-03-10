@@ -38,7 +38,7 @@ public class Student extends Person {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "student")
-	private CourseStudent courseStudent;
+	private Set<CourseStudent> courseStudent = new HashSet<CourseStudent>();
 	
 	@ManyToMany
 	@JoinTable(name = "student_career", joinColumns = {@JoinColumn(name = "student_fk")}, inverseJoinColumns = {@JoinColumn(name = "career_fk")})
@@ -76,11 +76,11 @@ public class Student extends Person {
 		this.relative = relative;
 	}
 
-	public CourseStudent getCourseStudent() {
+	public Set<CourseStudent> getCourseStudent() {
 		return courseStudent;
 	}
 
-	public void setCourseStudent(CourseStudent courseStudent) {
+	public void setCourseStudent(Set<CourseStudent> courseStudent) {
 		this.courseStudent = courseStudent;
 	}
 

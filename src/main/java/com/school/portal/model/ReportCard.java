@@ -1,5 +1,6 @@
 package com.school.portal.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -42,7 +43,7 @@ public class ReportCard {
 	private EvaluationType evaluationType;
 	
 	@OneToMany(mappedBy = "reportCard", cascade = CascadeType.ALL)
-	private Set<ReportCardDetail> cardDetail;
+	private Set<ReportCardDetail> cardDetail = new HashSet<ReportCardDetail>();
 
 	public ReportCard() {
 	}

@@ -61,7 +61,7 @@ public class Course {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "course")
-	private CourseTeacher courseTeacher;
+	private Set<CourseTeacher> courseTeacher = new HashSet<CourseTeacher>();
 	
 	@OneToOne
 	@JoinColumn(name = "course_fk", referencedColumnName = "course_id")
@@ -142,11 +142,11 @@ public class Course {
 		this.subject.removeIf(sub -> sub.getId()==subjectId);
 	}
 
-	public CourseTeacher getCourseTeacher() {
+	public Set<CourseTeacher> getCourseTeacher() {
 		return courseTeacher;
 	}
 
-	public void setCourseTeacher(CourseTeacher courseTeacher) {
+	public void setCourseTeacher(Set<CourseTeacher> courseTeacher) {
 		this.courseTeacher = courseTeacher;
 	}
 

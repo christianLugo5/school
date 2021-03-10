@@ -1,6 +1,7 @@
 package com.school.portal.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -61,7 +62,7 @@ public class Career {
 	
 	@ManyToMany
 	@JoinTable(joinColumns = {@JoinColumn(name = "career_fk")}, inverseJoinColumns = {@JoinColumn(name = "course_fk")})
-	private Set<Course> course;
+	private Set<Course> course = new HashSet<Course>();
 
 	public Career() {
 	}

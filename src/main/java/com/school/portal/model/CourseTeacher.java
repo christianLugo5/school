@@ -1,6 +1,8 @@
 package com.school.portal.model;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,9 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -27,13 +31,13 @@ public class CourseTeacher {
 	private int id;
 	
 	@NotNull
-	@OneToMany
+	@ManyToOne
 	@JoinColumn(name = "course_fk", referencedColumnName = "course_id")
 	private Course course;
 	
 	@NotNull
-	@OneToMany
-	@JoinColumn(name = "teacher_fk", referencedColumnName = "teacher_id")
+	@ManyToOne
+	@JoinColumn(name = "teacher_fk", referencedColumnName = "person_id")
 	private Teacher teacher;
 	
 	@NotNull
@@ -44,15 +48,15 @@ public class CourseTeacher {
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate to;
 	
-	@NotNull
-	private Integer capacity;
+	@PositiveOrZero
+	private int capacity;
 	
 	@NotNull
 	private Boolean available;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "courseTeacher")
-	private CourseStudent courseStudent;
+	private Set<CourseStudent> courseStudent = new HashSet<CourseStudent>();
 
 	public CourseTeacher() {
 	}
@@ -97,11 +101,11 @@ public class CourseTeacher {
 		this.to = to;
 	}
 
-	public Integer getCapacity() {
+	public int getCapacity() {
 		return capacity;
 	}
 
-	public void setCapacity(Integer capacity) {
+	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
 
@@ -113,12 +117,12 @@ public class CourseTeacher {
 		this.available = available;
 	}
 
-	public CourseStudent getCourseStudent() {
+	public Set<CourseStudent> getCourseStudent() {
 		return courseStudent;
 	}
 
-	public void setCourseStudent(CourseStudent courseStudent) {
+	public void setCourseStudent(Set<CourseStudent> courseStudent) {
 		this.courseStudent = courseStudent;
-	}	
-	
+	}
+		
 }
