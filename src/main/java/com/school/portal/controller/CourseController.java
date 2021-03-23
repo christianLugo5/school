@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -47,7 +48,7 @@ public class CourseController {
 	@GetMapping("/courses/{id}")
 	public ResponseEntity<EntityModel<Course>> one(@Positive @PathVariable int id){
 		EntityModel<Course> entityModel = repository.findById(id).map(assembler::toModel)
-				.orElseThrow(() -> new RuntimeException("Not found " + id));
+				.orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(entityModel);
 	}
 	
@@ -66,7 +67,7 @@ public class CourseController {
 			course = newCourse;
 			return repository.save(course);
 		})
-				.orElseThrow(() -> new RuntimeException("Not found" + id));
+				.orElseThrow(() -> new NoSuchElementException("Not found" + id));
 		
 		EntityModel<Course> entityModel = assembler.toModel(updatedCourse);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
@@ -93,7 +94,7 @@ public class CourseController {
 	@DeleteMapping("/courses/{courseId}/subjects/{subjectId}")
 	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int courseId, @Positive @PathVariable int subjectId){
 		try {
-			Course course = repository.findById(courseId).orElseThrow(() -> new RuntimeException("Not found"));
+			Course course = repository.findById(courseId).orElseThrow(() -> new NoSuchElementException("Not found"));
 			course.removeSubject(subjectId);
 			repository.save(course);
 			return ResponseEntity.ok().build();

@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -46,7 +47,7 @@ public class SubjectController {
 
 	@GetMapping("/subjects/{id}")
 	public ResponseEntity<EntityModel<Subject>> one(@Positive @PathVariable int id) {
-		Subject subject = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		Subject subject = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(assembler.toModel(subject));
 	}
 

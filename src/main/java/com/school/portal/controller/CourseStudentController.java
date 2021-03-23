@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -51,7 +52,7 @@ public class CourseStudentController {
 	public ResponseEntity<EntityModel<CourseStudent>> one(@Positive @PathVariable int classId,
 			@Positive @PathVariable int studentId, @Positive @PathVariable int id) {
 		EntityModel<CourseStudent> entityModel = repository.findById(id).map(assembler::toModel)
-				.orElseThrow(() -> new RuntimeException("Not found " + id));
+				.orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(entityModel);
 	}
 
@@ -71,7 +72,7 @@ public class CourseStudentController {
 			newCourseStudent.setStudent(courseS.getStudent());
 			courseS = newCourseStudent;
 			return repository.save(courseS);
-		}).orElseThrow(() -> new RuntimeException("Not found " + id));
+		}).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		EntityModel<CourseStudent> entityModel = assembler.toModel(updatedCourseStudent);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}

@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -47,7 +48,7 @@ public class EmployeeController {
 
 	@GetMapping("/employees/{id}")
 	public ResponseEntity<EntityModel<Employee>> one(@Positive @PathVariable int id) {
-		Employee employee = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		Employee employee = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(assembler.toModel(employee));
 	}
 
@@ -65,7 +66,7 @@ public class EmployeeController {
 			newEmployee.setAddress(employee.getAddress());
 			employee = newEmployee;
 			return repository.save(employee);
-		}).orElseThrow(() -> new RuntimeException("Not found " + id));
+		}).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 
 		EntityModel<Employee> entityModel = assembler.toModel(updatedEmployee);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
@@ -77,7 +78,7 @@ public class EmployeeController {
 			address.setId(employee.getAddress() == null ? null : employee.getAddress().getId());
 			employee.setAddress(address);
 			return repository.save(employee);
-		}).orElseThrow(() -> new RuntimeException("Not found " + id));
+		}).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 
 		EntityModel<Employee> entityModel = assembler.toModel(updatedEmployee);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);

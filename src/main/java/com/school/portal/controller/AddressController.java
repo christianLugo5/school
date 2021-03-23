@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -50,7 +51,7 @@ public class AddressController {
 	@GetMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses/{id}")
 	public ResponseEntity<EntityModel<Address>> one(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId, @Positive @PathVariable int id) {				
-		Address address = repository.findById(id).orElseThrow(() -> new RuntimeException("Not Found " + id));
+		Address address = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not Found " + id));
 		if(countryId != address.getCity().getState().getCountry().getId() || stateId != address.getCity().getState().getId()
 				|| cityId != address.getCity().getId())
 			return ResponseEntity.badRequest().build();
@@ -79,7 +80,7 @@ public class AddressController {
 				.map(address -> {
 					address = newAddress;
 					return repository.save(address);
-				}).orElseThrow(() -> new RuntimeException("Not found " + id));
+				}).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		EntityModel<Address> entityModel = assembler.toModel(updatedAddress);		
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}

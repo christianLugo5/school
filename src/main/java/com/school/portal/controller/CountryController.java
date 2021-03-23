@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -11,6 +12,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.school.portal.model.Country;
 import com.school.portal.model.assembler.CountryAssembler;
@@ -49,7 +52,7 @@ public class CountryController {
 
 	@GetMapping("/countries/{id}")
 	public EntityModel<Country> one(@Positive @PathVariable int id) {
-		Country country = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		Country country = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found " + id));
 		return assembler.toModel(country);
 	}
 
@@ -64,7 +67,7 @@ public class CountryController {
 		Country updatedCountry = repository.findById(id).map(country -> {
 			country = newCountry;
 			return repository.save(country);
-		}).orElseThrow(() -> new RuntimeException("Not found " + id));
+		}).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 
 		EntityModel<Country> entityModel = assembler.toModel(updatedCountry);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(updatedCountry);

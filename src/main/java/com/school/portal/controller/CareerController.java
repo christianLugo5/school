@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -47,7 +48,7 @@ public class CareerController {
 	@GetMapping("/careers/{id}")
 	public ResponseEntity<EntityModel<Career>> one(@Positive @PathVariable int id) {
 		EntityModel<Career> entityModel = repository.findById(id).map(assembler::toModel)
-				.orElseThrow(() -> new RuntimeException("Not found " + id));
+				.orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(entityModel);
 	}
 
@@ -61,7 +62,7 @@ public class CareerController {
 	public ResponseEntity<?> replaceCareer(@Valid @RequestBody Career newCareer, @Positive @PathVariable int id) {
 		if (newCareer.getId() != id)
 			return ResponseEntity.badRequest().build();
-		Career updatedCareer = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
+		Career updatedCareer = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		updatedCareer = repository.save(newCareer);
 
 		EntityModel<Career> entityModel = assembler.toModel(updatedCareer);

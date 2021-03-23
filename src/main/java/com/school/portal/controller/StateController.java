@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -61,7 +62,7 @@ public class StateController {
 		 * ResponseEntity.notFound().build()); else return
 		 * ResponseEntity.notFound().build();
 		 */
-		State state = repository.findById(stateId).orElseThrow(() -> new RuntimeException("Not found " + stateId));
+		State state = repository.findById(stateId).orElseThrow(() -> new NoSuchElementException("Not found " + stateId));
 		if (state.getCountry().getId() != countryId)
 			return null;// this should be response not found
 		return assembler.toModel(state);
@@ -85,7 +86,7 @@ public class StateController {
 		State updatedState = repository.findById(stateId).map(state -> {
 			state = newState;
 			return repository.save(state);
-		}).orElseThrow(() -> new RuntimeException("Not found " + stateId));
+		}).orElseThrow(() -> new NoSuchElementException("Not found " + stateId));
 
 		EntityModel<State> entityModel = assembler.toModel(updatedState);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);

@@ -1,6 +1,7 @@
 package com.school.portal.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -41,7 +42,7 @@ public class PaymentController {
 	@GetMapping("/payments/{id}")
 	public ResponseEntity<EntityModel<Payment>> one(@Positive @PathVariable int id) {
 		EntityModel<Payment> entityModel = repository.findById(id).map(assembler::toModel)
-				.orElseThrow(() -> new RuntimeException("Not found " + id));
+				.orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(entityModel);
 	}
 	
