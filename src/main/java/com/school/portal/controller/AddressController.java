@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -32,10 +31,13 @@ import com.school.portal.repository.AddressRepository;
 @Validated
 public class AddressController {
 
-	@Autowired
-	private AddressRepository repository;
-	@Autowired
-	private AddressAssembler assembler;
+	private final AddressRepository repository;
+	private final AddressAssembler assembler;
+	
+	public AddressController(AddressRepository repository, AddressAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;		
+	}
 		
 	@GetMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses")
 	@Validated

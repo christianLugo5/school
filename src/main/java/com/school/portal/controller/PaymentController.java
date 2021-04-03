@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -26,10 +25,13 @@ import com.school.portal.repository.PaymentRepository;
 @Validated
 public class PaymentController {
 
-	@Autowired
-	PaymentRepository repository;
-	@Autowired
-	PaymentAssembler assembler;
+	private final PaymentRepository repository;
+	private final PaymentAssembler assembler;
+	
+	public PaymentController(PaymentRepository repository, PaymentAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;		
+	}
 
 	@GetMapping("/payments")
 	public ResponseEntity<CollectionModel<EntityModel<Payment>>> all() {

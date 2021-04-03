@@ -52,8 +52,8 @@ public class CountryController {
 
 	@GetMapping("/countries/{id}")
 	public EntityModel<Country> one(@Positive @PathVariable int id) {
-		Country country = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found " + id));
-		return assembler.toModel(country);
+		return repository.findById(id).map(assembler::toModel)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found " + id));
 	}
 
 	@PostMapping("/countries")

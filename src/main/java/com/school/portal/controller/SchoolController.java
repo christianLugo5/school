@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -33,10 +32,13 @@ import com.school.portal.repository.SchoolRespository;
 @Validated
 public class SchoolController {
 
-	@Autowired
-	SchoolRespository repository;
-	@Autowired
-	SchoolAssembler assembler;
+	private final SchoolRespository repository;
+	private final SchoolAssembler assembler;
+	
+	public SchoolController(SchoolRespository repository, SchoolAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;		
+	}
 
 	@GetMapping("/schools")
 	public ResponseEntity<CollectionModel<EntityModel<School>>> all(@RequestParam(required = false) Integer countryId,

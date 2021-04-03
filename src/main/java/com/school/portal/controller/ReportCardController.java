@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -26,10 +25,13 @@ import com.school.portal.repository.ReportCardRepository;
 @Validated
 public class ReportCardController {
 
-	@Autowired
-	ReportCardRepository repository;
-	@Autowired
-	ReportCardAssembler assembler;
+	private final ReportCardRepository repository;
+	private final ReportCardAssembler assembler;
+	
+	public ReportCardController(ReportCardRepository repository, ReportCardAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;		
+	}
 
 	@GetMapping("/reports")
 	public ResponseEntity<CollectionModel<EntityModel<ReportCard>>> all() {

@@ -2,6 +2,8 @@ package com.school.portal.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,6 +19,8 @@ enum EducationalAttainment {
 }
 
 @Entity
+@DiscriminatorColumn(name = "person_type")
+@DiscriminatorValue("E")
 public class Employee extends Person {
 
 	@PositiveOrZero
@@ -31,11 +35,15 @@ public class Employee extends Person {
 	@Size(min = 10)
 	private String identifier;
 	
+	@Column(name = "person_type")
+	protected char PERSON_TYPE;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
 	private Address address;
 
 	public Employee() {
+		PERSON_TYPE = 'E';
 	}
 
 	public int getSalary() {

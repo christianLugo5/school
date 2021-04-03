@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -33,14 +32,17 @@ import com.school.portal.repository.StudentRepository;
 @Validated
 public class StudentController {
 	
-	@Autowired
-	StudentRepository repository;
-	@Autowired
-	StudentAssembler assembler;
+	private final StudentRepository repository;
+	private final StudentAssembler assembler;
+	
+	public StudentController(StudentRepository repository, StudentAssembler assembler) {
+		this.repository = repository;
+		this.assembler = assembler;		
+	}
 	
 	@GetMapping("/students")
 	public ResponseEntity<CollectionModel<EntityModel<Student>>> all(){
-		List<EntityModel<Student>> students = repository.findAll().stream().map(assembler::toModel)
+		List<EntityModel<Student>> students = repository.findAllByOrderByNameAsc().stream().map(assembler::toModel)
 				.collect(Collectors.toList());			
 		return ResponseEntity.ok(CollectionModel.of(students, 
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class)

@@ -33,6 +33,7 @@ public class Teacher extends Employee {
 	private Set<CourseTeacher> courseTeacher = new HashSet<CourseTeacher>();
 
 	public Teacher() {
+		PERSON_TYPE = 'T';
 	}
 
 	public byte getExperienceYear() {
