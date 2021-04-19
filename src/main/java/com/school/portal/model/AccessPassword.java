@@ -21,7 +21,7 @@ public class AccessPassword {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "password_id")
-	private int id;
+	private Integer id;
 	
 	@NotEmpty
 	@Size(min = 5, max = 128)
@@ -39,11 +39,11 @@ public class AccessPassword {
 	public AccessPassword() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

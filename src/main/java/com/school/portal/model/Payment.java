@@ -34,7 +34,7 @@ public class Payment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "payment_id")
-	private int id;
+	private Integer id;
 	
 	@Positive
 	@Column(name = "total_courses")
@@ -72,11 +72,11 @@ public class Payment {
 	public Payment() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

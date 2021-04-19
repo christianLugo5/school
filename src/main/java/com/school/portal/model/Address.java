@@ -48,7 +48,7 @@ public class Address {
 	protected Address() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 

@@ -25,7 +25,7 @@ public class Access {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "access_id")
-	private int id;
+	private Integer id;
 	
 	@NotEmpty
 	@Size(min = 3, max = 128)
@@ -55,11 +55,11 @@ public class Access {
 	public Access() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

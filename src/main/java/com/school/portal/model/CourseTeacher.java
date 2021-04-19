@@ -28,7 +28,7 @@ public class CourseTeacher {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "link_id")
-	private int id;
+	private Integer id;
 	
 	@NotNull
 	@ManyToOne
@@ -61,11 +61,11 @@ public class CourseTeacher {
 	public CourseTeacher() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

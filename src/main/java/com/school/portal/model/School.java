@@ -18,7 +18,7 @@ public class School {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "school_id")
-	private int id;
+	private Integer id;
 
 	@NotEmpty
 	@Size(min = 2, max = 15)
@@ -43,11 +43,11 @@ public class School {
 	public School() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

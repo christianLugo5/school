@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class State {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "state_id")
-	private int id;
+	private Integer id;
 
 	@NotEmpty @Size(min = 2, max = 45)
 	private String state;
@@ -40,11 +40,11 @@ public class State {
 	public State() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

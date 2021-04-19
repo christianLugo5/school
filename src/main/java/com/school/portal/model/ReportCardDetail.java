@@ -18,7 +18,7 @@ public class ReportCardDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "detail_id")
-	private int id;
+	private Integer id;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -34,11 +34,11 @@ public class ReportCardDetail {
 	public ReportCardDetail() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

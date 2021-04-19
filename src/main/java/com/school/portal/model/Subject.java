@@ -20,7 +20,7 @@ public class Subject {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "subject_id")
-	private int id;
+	private Integer id;
 	
 	@NotEmpty
 	@Size(min = 3, max = 120)
@@ -33,11 +33,11 @@ public class Subject {
 	public Subject() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
