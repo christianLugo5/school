@@ -15,7 +15,7 @@ public class StudentAssembler implements RepresentationModelAssembler<Student, E
 	public EntityModel<Student> toModel(Student student) {
 		return EntityModel.of(student, 
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class).one(student.getId())).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class).all()).withRel("Students"));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class).all(0, 50)).withRel("Students"));
 	}
 
 }

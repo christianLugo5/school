@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Student extends Person {
 
 	@NotEmpty
-	@Size(min = 10)
+	@Size(min = 10, max = 18)
 	private String identifier;
 	
 	@DateTimeFormat(iso = ISO.DATE_TIME)
