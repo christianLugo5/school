@@ -67,5 +67,11 @@ public class Teacher extends Employee {
 	public void setCourseTeacher(Set<CourseTeacher> courseTeacher) {
 		this.courseTeacher = courseTeacher;
 	}
+
+	@Override
+	public String toString() {
+		return "Teacher [" + super.toString() + "experienceYear=" + experienceYear + ", previousJob=" + previousJob 
+				+ ", active=" + active + "]";
+	}
 	
 }

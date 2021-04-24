@@ -43,5 +43,10 @@ public class Relative extends Person {
 	public void setRelationship(Relationship relationship) {
 		this.relationship = relationship;
 	}
+
+	@Override
+	public String toString() {
+		return "Relative [" + super.toString() + "relationship=" + relationship + "]";
+	}
 		
 }

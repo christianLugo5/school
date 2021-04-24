@@ -33,7 +33,7 @@ public abstract class Person {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "person_id", updatable = false)
-	private int id;
+	private Integer id;
 
 	@NotEmpty
 	@Size(min = 2, max = 45)
@@ -74,11 +74,11 @@ public abstract class Person {
 	public Person() {
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -160,6 +160,38 @@ public abstract class Person {
 
 	public void setBloodType(BloodType bloodType) {
 		this.bloodType = bloodType;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", name=" + name + ", lastName=" + lastName + ", curp=" + curp + ", rfc=" + rfc
+				+ ", phoneNumber=" + phoneNumber + ", dateOfBirth=" + dateOfBirth + ", gender=" + gender + ", email="
+				+ email + ", allergy=" + allergy + ", bloodType=" + bloodType + "]";
 	}
 
 }

@@ -78,4 +78,10 @@ public class Employee extends Person {
 		this.address = address;
 	}
 
+	@Override
+	public String toString() {
+		return "Employee [" + super.toString() + "salary=" + salary + ", educationalAttainment=" + educationalAttainment + ", identifier="
+				+ identifier + "]";
+	}
+
 }

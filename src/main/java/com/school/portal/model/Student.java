@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -32,7 +33,7 @@ public class Student extends Person {
 	@OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE)
 	private Set<Relative> relative = new HashSet<>();		
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
 	private Address address;
 	
@@ -98,6 +99,11 @@ public class Student extends Person {
 	
 	public void removeCareer(int careerId) {
 		this.career.removeIf(career -> career.getId() == careerId);
+	}
+
+	@Override
+	public String toString() {
+		return "Student [" + super.toString()  +  "identifier=" + identifier + ", registration=" + registration + "]";
 	}
 	
 }
