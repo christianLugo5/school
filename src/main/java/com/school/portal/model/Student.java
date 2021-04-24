@@ -43,7 +43,7 @@ public class Student extends Person {
 	
 	@ManyToMany
 	@JoinTable(name = "student_career", joinColumns = {@JoinColumn(name = "student_fk")}, inverseJoinColumns = {@JoinColumn(name = "career_fk")})
-	private Set<Career> career;
+	private Set<Career> career = new HashSet<Career>();
 	
 	public Student() {
 		registration = LocalDateTime.now();
