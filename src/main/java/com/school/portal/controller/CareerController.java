@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Career;
+import com.school.portal.model.Course;
 import com.school.portal.model.assembler.CareerAssembler;
 import com.school.portal.repository.CareerRepository;
 
@@ -70,15 +73,30 @@ public class CareerController {
 		EntityModel<Career> entityModel = assembler.toModel(updatedCareer);
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
+	
+	@PutMapping("/careers/{id}/courses")
+	public ResponseEntity<?> addCourseToCareer(@Valid @RequestBody Course course, @Positive @PathVariable int id){
+		Career career = repository.findById(id).orElseThrow();
+		career.addCourse(course);
+		repository.save(career);
+		
+		EntityModel<Career> entityModel = assembler.toModel(career);		
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
 
+	@Transactional
 	@DeleteMapping("/careers/{id}")
-	public ResponseEntity<?> deleteCareer(@Positive @PathVariable int id) {
-		try {
-			repository.deleteById(id);
-			return ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<?> deleteCareer(@Positive @PathVariable int id) throws EmptyResultDataAccessException {
+		repository.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@Transactional
+	@DeleteMapping("/careers/{id}/courses/{courseId}")
+	public ResponseEntity<?> deleteCourseFromCareer(@Positive @PathVariable int id,
+			@Positive @PathVariable int courseId) {
+		repository.deleteCourseFromCareerById(id, courseId);
+		return ResponseEntity.ok().build();
 	}
 
 	@ExceptionHandler

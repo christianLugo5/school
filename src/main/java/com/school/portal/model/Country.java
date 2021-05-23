@@ -33,6 +33,13 @@ public class Country {
 	public Country() {
 	}
 
+	public Country(Integer id, @NotEmpty @Size(min = 3, max = 45) String name,
+			@NotEmpty @Size(min = 1, max = 2) String code) {
+		this.id = id;
+		this.name = name;
+		this.code = code;
+	}
+
 	public Integer getId() {
 		return id;
 	}

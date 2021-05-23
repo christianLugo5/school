@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -84,25 +86,17 @@ public class CourseController {
 	}
 	
 	@DeleteMapping("/courses/{id}")
-	public ResponseEntity<?> deleteCourse(@Positive @PathVariable int id){
-		try {
-			repository.deleteById(id);
-			return ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<?> deleteCourse(@Positive @PathVariable int id) throws EmptyResultDataAccessException {
+		repository.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 	
+	@Transactional
 	@DeleteMapping("/courses/{courseId}/subjects/{subjectId}")
-	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int courseId, @Positive @PathVariable int subjectId){
-		try {
-			Course course = repository.findById(courseId).orElseThrow(() -> new NoSuchElementException("Not found"));
-			course.removeSubject(subjectId);
-			repository.save(course);
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int courseId,
+			@Positive @PathVariable int subjectId) {
+		repository.deleteCourseSubjectById(courseId, subjectId);
+		return ResponseEntity.ok().build();
 	}
 	
 	@ExceptionHandler

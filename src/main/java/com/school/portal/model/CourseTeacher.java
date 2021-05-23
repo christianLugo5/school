@@ -21,6 +21,8 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+// CourseTeacher (class) just can have one Course and one Teacher
+
 @Entity
 @Table(name = "course_teacher")
 public class CourseTeacher {

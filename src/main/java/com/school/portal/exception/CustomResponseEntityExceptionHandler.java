@@ -2,6 +2,7 @@ package com.school.portal.exception;
 
 import java.util.NoSuchElementException;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,4 +19,10 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 	
+	@ExceptionHandler(value = EmptyResultDataAccessException.class)
+	protected ResponseEntity<Object> handleConflict(EmptyResultDataAccessException ex, WebRequest request){
+		String message = ex.getMessage();
+		message = message.replaceAll("class|com|school|portal|model", "").replace(".", "");
+		return handleExceptionInternal(ex, message, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
 }

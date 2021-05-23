@@ -26,6 +26,7 @@ enum CourseType {
 	SEMESTER, QUARTER;
 }
 
+// A course can have many subjects, so we can add one or pass a list
 @Entity
 public class Course {
 
