@@ -28,7 +28,7 @@ public class AccessRecover {
 	
 	@NotNull
 	@OneToOne
-	@JoinColumn(name = "password_fk", referencedColumnName = "password_id")
+	@JoinColumn(name = "password_id", referencedColumnName = "password_id")
 	private AccessPassword password;
 	
 	@NotEmpty

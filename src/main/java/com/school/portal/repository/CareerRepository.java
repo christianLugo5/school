@@ -10,11 +10,11 @@ import com.school.portal.model.Career;
 public interface CareerRepository extends JpaRepository<Career, Integer> {
 
 	@Modifying
-	@Query(value = "DELETE FROM career_course WHERE career_fk = :careerId;", nativeQuery = true)
+	@Query(value = "DELETE FROM career_course WHERE career_id = :careerId;", nativeQuery = true)
 	public void deleteAllCourses(@Param(value = "careerId") int careerId);
 
 	@Modifying
-	@Query(value = "DELETE FROM career_course WHERE career_fk = :careerId AND course_fk = :courseId", nativeQuery = true)
+	@Query(value = "DELETE FROM career_course WHERE career_id = :careerId AND course_id = :courseId", nativeQuery = true)
 	public void deleteCourseFromCareerById(@Param("careerId") int careerId, @Param("courseId") int courseId);
 
 }

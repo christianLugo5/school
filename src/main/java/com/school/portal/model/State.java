@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "country_state")
+@Table(name = "state_country")
 public class State {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "state_id")
@@ -30,7 +30,7 @@ public class State {
 	private String abbreviation;
 
 	@NotNull
-	@ManyToOne @JoinColumn(name = "country_fk", referencedColumnName = "country_id")
+	@ManyToOne @JoinColumn(name = "country_id", referencedColumnName = "country_id")
 	private Country country;
 
 	@JsonIgnore

@@ -29,7 +29,7 @@ public class AccessPassword {
 	
 	@NotNull
 	@OneToOne
-	@JoinColumn(name = "access_fk", referencedColumnName = "access_id")
+	@JoinColumn(name = "access_id", referencedColumnName = "access_id")
 	private Access access;
 	
 	@JsonIgnore

@@ -61,7 +61,7 @@ public class Career {
 	private byte max_duration;
 	
 	@ManyToMany
-	@JoinTable(joinColumns = {@JoinColumn(name = "career_fk")}, inverseJoinColumns = {@JoinColumn(name = "course_fk")})
+	@JoinTable(joinColumns = {@JoinColumn(name = "career_id")}, inverseJoinColumns = {@JoinColumn(name = "course_id")})
 	private Set<Course> course = new HashSet<Course>();
 
 	public Career() {

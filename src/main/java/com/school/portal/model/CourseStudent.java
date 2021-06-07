@@ -34,12 +34,12 @@ public class CourseStudent {
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "course_teacher_fk", referencedColumnName = "link_id")
+	@JoinColumn(name = "course_teacher_id", referencedColumnName = "link_id")
 	private CourseTeacher courseTeacher;
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "student_fk", referencedColumnName = "person_id")
+	@JoinColumn(name = "student_id", referencedColumnName = "person_id")
 	private Student student;
 
 	@NotNull

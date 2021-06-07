@@ -31,7 +31,7 @@ public class ReportCard {
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name = "course_teacher_fk" ,referencedColumnName = "link_id")
+	@JoinColumn(name = "course_teacher_id" ,referencedColumnName = "link_id")
 	private CourseStudent courseStudent;
 	
 	@PositiveOrZero

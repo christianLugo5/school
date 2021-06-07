@@ -26,7 +26,7 @@ public class PaymentDetail {
 	
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "course_teacher_student_fk")
+	@JoinColumn(name = "course_teacher_student_id")
 	private CourseStudent courseStudent;
 	
 	@JsonIgnore

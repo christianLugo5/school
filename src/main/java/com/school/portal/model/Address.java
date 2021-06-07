@@ -21,7 +21,7 @@ public class Address {
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "city_fk", referencedColumnName = "city_id", nullable = false)
+	@JoinColumn(name = "city_id", referencedColumnName = "city_id", nullable = false)
 	private City city;	
 	
 	@NotEmpty @Size(min = 3, max = 45)

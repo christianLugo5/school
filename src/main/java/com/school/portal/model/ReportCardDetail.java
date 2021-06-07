@@ -22,7 +22,7 @@ public class ReportCardDetail {
 	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "report_card_fk", referencedColumnName = "report_card_id")
+	@JoinColumn(name = "report_card_id", referencedColumnName = "report_card_id")
 	private ReportCard reportCard;
 	
 	private byte unit;

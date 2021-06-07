@@ -39,7 +39,7 @@ public class Employee extends Person {
 	protected char PERSON_TYPE;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	@JoinColumn(name = "address_id", referencedColumnName = "address_id")
 	private Address address;
 
 	public Employee() {

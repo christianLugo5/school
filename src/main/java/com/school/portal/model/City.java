@@ -30,7 +30,7 @@ public class City {
 	private String abbreviation;
 
 	@ManyToOne
-	@JoinColumn(name = "state_fk", referencedColumnName = "state_id", nullable = false)
+	@JoinColumn(name = "state_id", referencedColumnName = "state_id", nullable = false)
 	private State state;
 
 	@JsonIgnore

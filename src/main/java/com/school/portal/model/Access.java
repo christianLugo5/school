@@ -33,7 +33,7 @@ public class Access {
 	
 	@NotNull
 	@OneToOne
-	@JoinColumn(name = "person_fk", referencedColumnName = "person_id")
+	@JoinColumn(name = "person_id", referencedColumnName = "person_id")
 	private Person person;
 		
 	@Column(name = "last_login")

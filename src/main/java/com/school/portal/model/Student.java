@@ -34,7 +34,7 @@ public class Student extends Person {
 	private Set<Relative> relative = new HashSet<>();		
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	@JoinColumn(name = "address_id", referencedColumnName = "address_id")
 	private Address address;
 	
 	@JsonIgnore
@@ -42,7 +42,7 @@ public class Student extends Person {
 	private Set<CourseStudent> courseStudent = new HashSet<CourseStudent>();
 	
 	@ManyToMany
-	@JoinTable(name = "student_career", joinColumns = {@JoinColumn(name = "student_fk")}, inverseJoinColumns = {@JoinColumn(name = "career_fk")})
+	@JoinTable(name = "student_career", joinColumns = {@JoinColumn(name = "student_id")}, inverseJoinColumns = {@JoinColumn(name = "career_id")})
 	private Set<Career> career = new HashSet<Career>();
 	
 	public Student() {

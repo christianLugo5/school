@@ -18,7 +18,7 @@ public class Relative extends Person {
 	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "student_fk", referencedColumnName = "person_id")
+	@JoinColumn(name = "student_id", referencedColumnName = "person_id")
 	private Student student;
 	
 	@NotNull

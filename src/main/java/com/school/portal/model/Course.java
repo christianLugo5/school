@@ -65,7 +65,7 @@ public class Course {
 	private Set<CourseTeacher> courseTeacher = new HashSet<CourseTeacher>();
 	
 	@OneToOne
-	@JoinColumn(name = "course_fk", referencedColumnName = "course_id")
+	@JoinColumn(name = "previous_course_id", referencedColumnName = "course_id")
 	private Course previousCourse;
 
 	public Course() {

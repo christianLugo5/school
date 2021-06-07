@@ -37,7 +37,7 @@ public class School {
 	private String rfc;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "address_fk", referencedColumnName = "address_id")
+	@JoinColumn(name = "address_id", referencedColumnName = "address_id")
 	private Address address;
 
 	public School() {
