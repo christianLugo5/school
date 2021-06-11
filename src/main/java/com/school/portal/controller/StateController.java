@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.State;
@@ -29,6 +30,7 @@ import com.school.portal.repository.StateRepository;
 
 @RestController
 @Validated
+@RequestMapping("/countries/{countryId}/states")
 public class StateController {
 
 	private final StateRepository repository;
@@ -39,21 +41,21 @@ public class StateController {
 		this.assembler = assembler;
 	}
 
-	@GetMapping("/countries/{id}/states")
-	public ResponseEntity<CollectionModel<EntityModel<State>>> all(@Positive @PathVariable int id) {
+	@GetMapping
+	public ResponseEntity<CollectionModel<EntityModel<State>>> all(@Positive @PathVariable int countryId) {
 		/*
 		 * return Optional.ofNullable(repository.findAllByCountryId(id)) .map(state ->
 		 * ResponseEntity.ok().body(state)).orElseGet(() ->
 		 * ResponseEntity.notFound().build());
 		 */
-		List<EntityModel<State>> states = repository.findAllByCountryId(id).stream().map(assembler::toModel)
+		List<EntityModel<State>> states = repository.findAllByCountryId(countryId).stream().map(assembler::toModel)
 				.collect(Collectors.toList());
 		return ResponseEntity.ok(CollectionModel.of(states,
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class).all(id)).withSelfRel()));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class).all(countryId)).withSelfRel()));
 
 	}
 
-	@GetMapping("/countries/{countryId}/states/{stateId}")
+	@GetMapping("/{stateId}")
 	public EntityModel<State> one(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId) {
 		/*
 		 * if (stateId > 0) return
@@ -68,7 +70,7 @@ public class StateController {
 		return assembler.toModel(state);
 	}
 
-	@PostMapping("/countries/{id}/states")
+	@PostMapping
 	public ResponseEntity<?> newState(@Valid @RequestBody State state, @Positive @PathVariable int id) {
 		if (state.getCountry().getId() != id)
 			return ResponseEntity.badRequest().build();
@@ -77,7 +79,7 @@ public class StateController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PutMapping("/countries/{countryId}/states/{stateId}")
+	@PutMapping("/{stateId}")
 	public ResponseEntity<?> replaceState(@Valid @RequestBody State newState, @Positive @PathVariable int countryId,
 			@Positive @PathVariable int stateId) {
 		if (newState.getId() != stateId || newState.getCountry().getId() != countryId)
@@ -92,7 +94,7 @@ public class StateController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@DeleteMapping("/countries/{countryId}/states/{stateId}")
+	@DeleteMapping("/{stateId}")
 	public ResponseEntity<?> deleteState(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId) {
 			try {
 				repository.deleteById(stateId);

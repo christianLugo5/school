@@ -15,9 +15,7 @@ public class ReportCardAssembler implements RepresentationModelAssembler<ReportC
 	public EntityModel<ReportCard> toModel(ReportCard reportCard) {
 		return EntityModel.of(reportCard,
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ReportCardController.class).one(reportCard.getId()))
-						.withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ReportCardController.class).all())
-						.withRel("report cards"));
+						.withSelfRel());
 	}
 
 }

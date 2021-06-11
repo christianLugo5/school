@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Course;
@@ -32,6 +33,7 @@ import com.school.portal.repository.CourseRepository;
 
 @RestController
 @Validated
+@RequestMapping("/courses")
 public class CourseController {
 	
 	private final CourseRepository repository;
@@ -42,27 +44,43 @@ public class CourseController {
 		this.assembler = assembler;		
 	}
 	
-	@GetMapping("/courses")
+	@GetMapping
 	public ResponseEntity<CollectionModel<EntityModel<Course>>> all(){
 		List<EntityModel<Course>> courses = repository.findAll().stream().map(assembler::toModel).collect(Collectors.toList());
 		return ResponseEntity.ok(CollectionModel.of(courses, 
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CourseController.class).all()).withSelfRel()));
 	}
 	
-	@GetMapping("/courses/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<EntityModel<Course>> one(@Positive @PathVariable int id){
 		EntityModel<Course> entityModel = repository.findById(id).map(assembler::toModel)
 				.orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(entityModel);
 	}
 	
-	@PostMapping("/courses")
+	@GetMapping("/teachers/{id}")
+	public ResponseEntity<CollectionModel<EntityModel<Course>>> allByTeacher(@PathVariable @Positive Integer id){
+		List<EntityModel<Course>> courses = repository.findAllCourseByCourseTeacherTeacherId(id)
+				.stream().map(assembler::toModel).collect(Collectors.toList());
+		return ResponseEntity.ok(CollectionModel.of(courses, 
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CourseController.class).all()).withSelfRel()));
+	}
+	
+	@GetMapping("/careers/{id}")
+	public ResponseEntity<CollectionModel<EntityModel<Course>>> allByCareer(@PathVariable @Positive Integer id){
+		List<EntityModel<Course>> courses = repository.findAllCourseByCourseTeacherTeacherId(id)
+				.stream().map(assembler::toModel).collect(Collectors.toList());
+		return ResponseEntity.ok(CollectionModel.of(courses, 
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CourseController.class).all()).withSelfRel()));
+	}
+	
+	@PostMapping
 	public ResponseEntity<?> newCourse(@Valid @RequestBody Course course){
 		EntityModel<Course> entityModel = assembler.toModel(repository.save(course));
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
-	@PutMapping("/courses/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> replaceCourse(@Valid @RequestBody Course newCourse, @Positive @PathVariable int id){
 		if(newCourse.getId() != id)
 			return ResponseEntity.badRequest().build();
@@ -77,7 +95,7 @@ public class CourseController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
-	@PutMapping("/courses/{id}/subjects")
+	@PutMapping("/{id}/subjects")
 	public ResponseEntity<?> newSubject(@Valid @RequestBody Subject subject ,@Positive @PathVariable int id){
 		Course course = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found " + id));
 		course.addSubject(subject);
@@ -85,14 +103,14 @@ public class CourseController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
-	@DeleteMapping("/courses/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteCourse(@Positive @PathVariable int id) throws EmptyResultDataAccessException {
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@Transactional
-	@DeleteMapping("/courses/{courseId}/subjects/{subjectId}")
+	@DeleteMapping("/{courseId}/subjects/{subjectId}")
 	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int courseId,
 			@Positive @PathVariable int subjectId) {
 		repository.deleteCourseSubjectById(courseId, subjectId);

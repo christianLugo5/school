@@ -14,10 +14,8 @@ public class SubjectAssembler implements RepresentationModelAssembler<Subject, E
 	@Override
 	public EntityModel<Subject> toModel(Subject subject) {
 		return EntityModel.of(subject,
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SubjectController.class).one(subject.getId()))
-						.withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SubjectController.class).all())
-						.withRel("Subjects"));
+				WebMvcLinkBuilder.linkTo(SubjectController.class).slash(subject.getId())
+						.withSelfRel());
 	}
 
 }

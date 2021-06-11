@@ -5,6 +5,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.school.portal.controller.CityController;
 import com.school.portal.controller.StateController;
 import com.school.portal.model.State;
 
@@ -14,8 +15,10 @@ public class StateAssembler implements RepresentationModelAssembler<State, Entit
 	@Override
 	public EntityModel<State> toModel(State state) {
 		return EntityModel.of(state, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class).one(state.getCountry().getId(), state.getId())).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class).all(state.getCountry().getId())).withRel("states"));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StateController.class)
+						.one(state.getCountry().getId(), state.getId())).withSelfRel(),
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CityController.class)
+						.all(state.getCountry().getId(), state.getId())).withRel("cities"));
 	}
 
 }

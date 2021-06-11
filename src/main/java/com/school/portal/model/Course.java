@@ -55,6 +55,10 @@ public class Course {
 	private int capacity;
 	@NotNull
 	private BigDecimal price;
+		
+	@OneToOne
+	@JoinColumn(name = "previous_course_id", referencedColumnName = "course_id")
+	private Course previousCourse;
 	
 	@ManyToMany
 	@JoinTable(name = "course_subject", joinColumns = {@JoinColumn(name = "course_id")}, inverseJoinColumns = {@JoinColumn(name = "subject_id")})	
@@ -64,9 +68,8 @@ public class Course {
 	@OneToMany(mappedBy = "course")
 	private Set<CourseTeacher> courseTeacher = new HashSet<CourseTeacher>();
 	
-	@OneToOne
-	@JoinColumn(name = "previous_course_id", referencedColumnName = "course_id")
-	private Course previousCourse;
+	@ManyToMany(mappedBy = "course")
+	private Set<Career> career = new HashSet<Career>();
 
 	public Course() {
 	}

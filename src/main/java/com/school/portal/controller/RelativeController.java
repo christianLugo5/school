@@ -21,54 +21,61 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Relative;
 import com.school.portal.model.Student;
 import com.school.portal.model.assembler.RelativeAssembler;
+import com.school.portal.model.assembler.StudentAssembler;
 import com.school.portal.repository.RelativeRepository;
-import com.school.portal.repository.StudentRepository;
 
 @RestController
 @Validated
+@RequestMapping("/relatives")
 public class RelativeController {
 	
 	private final RelativeRepository repository;
 	private final RelativeAssembler assembler;
-	private final StudentRepository studentRepo;
+	private final StudentAssembler studentAssembler;
 	
-	public RelativeController(StudentRepository studentRepo, RelativeRepository repository, RelativeAssembler assembler) {
+	public RelativeController(RelativeRepository repository, RelativeAssembler assembler, StudentAssembler studentAssembler) {
 		this.repository = repository;
 		this.assembler = assembler;
-		this.studentRepo = studentRepo;		
+		this.studentAssembler = studentAssembler;		
 	}
 		
-	@GetMapping("/students/{studentId}/relatives")
-	public ResponseEntity<CollectionModel<EntityModel<Relative>>> all(@Positive @PathVariable int studentId){
+	@GetMapping
+	public ResponseEntity<CollectionModel<EntityModel<Relative>>> all(){
 		List<EntityModel<Relative>> relatives = repository.findAll().stream().map(assembler::toModel)
 				.collect(Collectors.toList());		
 		return ResponseEntity.ok(CollectionModel.of(relatives, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).all(studentId)).withSelfRel()));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).all()).withSelfRel()));
 	}
 	
-	@GetMapping("/students/{studentId}/relatives/{id}")
-	public ResponseEntity<EntityModel<Relative>> one(@Positive @PathVariable int studentId, @Positive @PathVariable int id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<EntityModel<Relative>> one(@Positive @PathVariable Integer id) {
 		EntityModel<Relative> entityModel = repository.findById(id).map(assembler::toModel)
 				.orElseThrow(() -> new NoSuchElementException("Not found " + id));		
 		return ResponseEntity.ok(entityModel);
 	}
 	
-	@PostMapping("/students/{studentId}/relatives")
-	public ResponseEntity<?> newRelative(@Valid @RequestBody Relative relative, @Positive @PathVariable int studentId) {
-		Student student = studentRepo.findById(studentId).orElseThrow(() -> new RuntimeException("Not found " + studentId));
-		relative.setStudent(student);
+	@GetMapping("/{id}/students")
+	public ResponseEntity<CollectionModel<EntityModel<Student>>> allStudents(@Positive @PathVariable int id){
+		List<EntityModel<Student>> students = repository.findAllStudentById(id).stream()
+				.map(studentAssembler::toModel).collect(Collectors.toList());		
+		return ResponseEntity.ok(CollectionModel.of(students, 
+				WebMvcLinkBuilder.linkTo(RelativeController.class).withSelfRel()));
+	}
+	
+	@PostMapping
+	public ResponseEntity<?> newRelative(@Valid @RequestBody Relative relative) {
 		EntityModel<Relative> entityModel = assembler.toModel(repository.save(relative));		
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
-	@PutMapping("/students/{studentId}/relatives/{id}")
-	public ResponseEntity<?> replaceRelative(@Valid @RequestBody Relative newRelative,@Positive @PathVariable int studentId, 
-			@Positive @PathVariable int id) {
+	@PutMapping("/{id}")
+	public ResponseEntity<?> replaceRelative(@Valid @RequestBody Relative newRelative, @Positive @PathVariable int id) {
 		if(newRelative.getId() != id)
 			return ResponseEntity.badRequest().build();
 		
@@ -82,7 +89,7 @@ public class RelativeController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 	
-	@DeleteMapping("/students/{studentId}/relatives/{id}")
+	@DeleteMapping("/{id}/students/{studentId}")
 	public ResponseEntity<?> deleteRelative(@Positive @PathVariable int studentId, @Positive @PathVariable int id) {
 		try {
 			repository.deleteById(id);

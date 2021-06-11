@@ -15,11 +15,7 @@ public class SchoolAssembler implements RepresentationModelAssembler<School, Ent
 	public EntityModel<School> toModel(School school) {
 		return EntityModel.of(school,
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SchoolController.class).one(school.getId()))
-						.withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SchoolController.class).all(
-						school.getAddress().getCity().getState().getCountry().getId(),
-						school.getAddress().getCity().getState().getId(), school.getAddress().getCity().getId()))
-						.withRel("Schools"));
+						.withSelfRel());
 	}
 
 }

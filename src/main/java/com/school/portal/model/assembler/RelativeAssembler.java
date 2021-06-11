@@ -14,8 +14,8 @@ public class RelativeAssembler implements RepresentationModelAssembler<Relative,
 	@Override
 	public EntityModel<Relative> toModel(Relative relative) {
 		return EntityModel.of(relative, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).one(relative.getStudent().getId(), relative.getId())).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).all(relative.getStudent().getId())).withRel("Relatives"));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).one(relative.getId())).withSelfRel(),
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RelativeController.class).allStudents(relative.getId())).withRel("students"));
 	}
 
 }

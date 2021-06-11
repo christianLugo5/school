@@ -14,8 +14,7 @@ public class EmployeeAssembler implements RepresentationModelAssembler<Employee,
 	@Override
 	public EntityModel<Employee> toModel(Employee employee) {
 		return EntityModel.of(employee, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).all()).withRel("Employees"));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EmployeeController.class).one(employee.getId())).withSelfRel());
 	}
 
 }

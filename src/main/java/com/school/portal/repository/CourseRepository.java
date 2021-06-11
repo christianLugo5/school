@@ -1,5 +1,7 @@
 package com.school.portal.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +18,9 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 	@Modifying
 	@Query(value = "DELETE FROM course_subject WHERE course_id = :courseId AND subject_id = :subjectId", nativeQuery = true)
 	public void deleteCourseSubjectById(@Param("courseId") int courseId, @Param("subjectId") int subjectId);
+	
+	public List<Course> findAllCourseByCourseTeacherTeacherId(int id);
+	
+	public List<Course> findAllCourseByCareerId(int id);
 
 }

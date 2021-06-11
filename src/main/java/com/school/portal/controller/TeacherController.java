@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Address;
@@ -30,6 +31,7 @@ import com.school.portal.repository.TeacherRepository;
 
 @RestController
 @Validated
+@RequestMapping("/teachers")
 public class TeacherController {
 
 	private final TeacherRepository repository;	
@@ -37,10 +39,10 @@ public class TeacherController {
 	
 	public TeacherController(TeacherRepository repository, TeacherAssembler assembler) {
 		this.repository = repository;
-		this.assembler = assembler;		
+		this.assembler = assembler;
 	}
 
-	@GetMapping("/teachers")
+	@GetMapping
 	public ResponseEntity<CollectionModel<EntityModel<Teacher>>> all() {
 		List<EntityModel<Teacher>> teachers = repository.findAll().stream().map(assembler::toModel)
 				.collect(Collectors.toList());
@@ -48,19 +50,19 @@ public class TeacherController {
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TeacherController.class).all()).withSelfRel()));
 	}
 
-	@GetMapping("/teachers/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<EntityModel<Teacher>> one(@Positive @PathVariable int id) {
 		Teacher teacher = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(assembler.toModel(teacher));
 	}
 
-	@PostMapping("/teachers")
+	@PostMapping
 	public ResponseEntity<?> newTeacher(@Valid @RequestBody Teacher teacher) {
 		EntityModel<Teacher> entityModel = assembler.toModel(repository.save(teacher));
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PutMapping("/teachers/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> replaceTeacher(@Valid @RequestBody Teacher newTeacher, @Positive @PathVariable int id) {
 		if (newTeacher.getId() != id)
 			return ResponseEntity.badRequest().build();
@@ -74,7 +76,7 @@ public class TeacherController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PutMapping("/teachers/{id}/address")
+	@PutMapping("/{id}/address")
 	public ResponseEntity<?> replaceEmployee(@Valid @RequestBody Address address, @Positive @PathVariable int id) {
 		Teacher updatedTeacher = repository.findById(id).map(teacher -> {
 			address.setId(teacher.getAddress() == null ? null : teacher.getAddress().getId());
@@ -86,7 +88,7 @@ public class TeacherController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@DeleteMapping("/teachers/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteTeacher(@Positive @PathVariable int id) {
 		try {
 			repository.deleteById(id);

@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+import org.slf4j.Logger;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,17 +33,20 @@ import com.school.portal.repository.CountryRepository;
 
 @RestController
 @Validated
+@RequestMapping("/countries")
 public class CountryController {
 
 	private final CountryRepository repository;
 	private final CountryAssembler assembler;
+	
+	private final static Logger logger = org.slf4j.LoggerFactory.getLogger(CountryController.class);
 
 	public CountryController(CountryRepository countryRepository, CountryAssembler assembler) {
 		this.repository = countryRepository;
 		this.assembler = assembler;
 	}
 
-	@GetMapping("/countries")
+	@GetMapping
 	public CollectionModel<EntityModel<Country>> all() {
 		List<EntityModel<Country>> countries = repository.findAll().stream().map(assembler::toModel)
 				.collect(Collectors.toList());
@@ -50,19 +55,19 @@ public class CountryController {
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CountryController.class).all()).withSelfRel());
 	}
 
-	@GetMapping("/countries/{id}")
+	@GetMapping("/{id}")
 	public EntityModel<Country> one(@Positive @PathVariable int id) {
 		return repository.findById(id).map(assembler::toModel)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not found " + id));
 	}
 
-	@PostMapping("/countries")
+	@PostMapping
 	public ResponseEntity<?> newCountry(@Valid @RequestBody Country country) {
 		EntityModel<Country> entityModel = assembler.toModel(repository.save(country));
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PutMapping("/countries/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> replaceCountry(@Valid @RequestBody Country newCountry, @Positive @PathVariable int id) {
 		Country updatedCountry = repository.findById(id).map(country -> {
 			country = newCountry;
@@ -73,7 +78,7 @@ public class CountryController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(updatedCountry);
 	}
 
-	@DeleteMapping("/countries/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteCountry(@Positive @PathVariable int id) {
 		try {
 			repository.deleteById(id);
@@ -82,6 +87,7 @@ public class CountryController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
 	
 	@ExceptionHandler
 	public String constraintViolationHandler(ConstraintViolationException ex){

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Subject;
@@ -29,6 +30,7 @@ import com.school.portal.repository.SubjectRepository;
 
 @RestController
 @Validated
+@RequestMapping("/subjects")
 public class SubjectController {
 
 	private final SubjectRepository repository;
@@ -39,7 +41,7 @@ public class SubjectController {
 		this.assembler = assembler;		
 	}
 
-	@GetMapping("/subjects")
+	@GetMapping
 	public ResponseEntity<CollectionModel<EntityModel<Subject>>> all() {
 		List<EntityModel<Subject>> subjects = repository.findAll().stream().map(assembler::toModel)
 				.collect(Collectors.toList());
@@ -47,19 +49,19 @@ public class SubjectController {
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(SubjectController.class).all()).withSelfRel()));
 	}
 
-	@GetMapping("/subjects/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<EntityModel<Subject>> one(@Positive @PathVariable int id) {
 		Subject subject = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
 		return ResponseEntity.ok(assembler.toModel(subject));
 	}
 
-	@PostMapping("/subjects")
+	@PostMapping
 	public ResponseEntity<?> newSubject(@Valid @RequestBody Subject subject) {
 		EntityModel<Subject> entityModel = assembler.toModel(repository.save(subject));
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PutMapping("/subjects/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> replaceSubject(@Valid @RequestBody Subject subject, @Positive @PathVariable int id) {
 		if (id != subject.getId())
 			return ResponseEntity.badRequest().build();
@@ -67,7 +69,7 @@ public class SubjectController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@DeleteMapping("/subjects/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteSubject(@Positive @PathVariable int id) {
 		try {
 			repository.deleteById(id);

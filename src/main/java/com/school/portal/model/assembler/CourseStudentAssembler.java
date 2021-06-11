@@ -19,7 +19,7 @@ public class CourseStudentAssembler implements RepresentationModelAssembler<Cour
 						courseStudent.getId())).withSelfRel(),
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CourseStudentController.class)
 						.all(courseStudent.getCourseTeacher().getCourse().getId(), courseStudent.getStudent().getId()))
-						.withRel("Students class"));
+						.withRel("studentsClasses"));
 	}
 
 }

@@ -14,8 +14,7 @@ public class PaymentAssembler implements RepresentationModelAssembler<Payment, E
 	@Override
 	public EntityModel<Payment> toModel(Payment payment) {
 		return EntityModel.of(payment, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaymentController.class).one(payment.getId())).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaymentController.class).all()).withRel("Payments"));
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PaymentController.class).one(payment.getId())).withSelfRel());
 	}
 
 }

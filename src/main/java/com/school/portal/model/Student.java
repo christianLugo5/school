@@ -30,8 +30,8 @@ public class Student extends Person {
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private final LocalDateTime registration;
 	
-	@OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE)
-	private Set<Relative> relative = new HashSet<>();		
+	@OneToMany(mappedBy = "student")
+	private Set<RelativeStudent> relative = new HashSet<>();		
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "address_id", referencedColumnName = "address_id")
@@ -69,12 +69,16 @@ public class Student extends Person {
 		this.address = address;
 	}
 
-	public Set<Relative> getRelative() {
+	public Set<RelativeStudent> getRelative() {
 		return relative;
 	}
 
-	public void setRelative(Set<Relative> relative) {
+	public void setRelative(Set<RelativeStudent> relative) {
 		this.relative = relative;
+	}
+
+	public void addRelative(RelativeStudent relative) {
+		this.relative.add(relative);
 	}
 
 	public Set<CourseStudent> getCourseStudent() {

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.school.portal.model.Address;
@@ -29,6 +30,7 @@ import com.school.portal.repository.AddressRepository;
 
 @RestController
 @Validated
+@RequestMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses")
 public class AddressController {
 
 	private final AddressRepository repository;
@@ -39,7 +41,7 @@ public class AddressController {
 		this.assembler = assembler;		
 	}
 		
-	@GetMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses")
+	@GetMapping
 	@Validated
 	public ResponseEntity<CollectionModel<EntityModel<Address>>> all(@Positive @PathVariable Integer countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId) {				
@@ -50,7 +52,7 @@ public class AddressController {
 						.all(countryId, stateId, cityId)).withSelfRel()));
 	};
 
-	@GetMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<EntityModel<Address>> one(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId, @Positive @PathVariable int id) {				
 		Address address = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not Found " + id));
@@ -61,7 +63,7 @@ public class AddressController {
 		return ResponseEntity.ok(assembler.toModel(address));
 	}
 
-	@PostMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses")
+	@PostMapping
 	public ResponseEntity<?> newAddress(@Valid @RequestBody Address newAddress, @Positive @PathVariable int countryId, 
 			@Positive @PathVariable int stateId, @Positive @PathVariable int cityId) {
 		if (newAddress.getCity().getId() != cityId || newAddress.getCity().getState().getId() != stateId 
@@ -71,7 +73,7 @@ public class AddressController {
 		return ResponseEntity.created(address.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(address);
 	}
 
-	@PutMapping("/cities/{countryId}/states/{stateId}/cities/{cityId}/addresses/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<?> replaceAddress(@Valid @RequestBody Address newAddress, @Positive @PathVariable int countryId, @Positive @PathVariable int stateId,
 			@Positive @PathVariable int cityId, @Positive @PathVariable int id) {
 		if (newAddress.getId() != id || newAddress.getCity().getId() != cityId || newAddress.getCity().getState().getId() != stateId 
@@ -87,7 +89,7 @@ public class AddressController {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@DeleteMapping("/countries/{countryId}/states/{stateId}/cities/{cityId}/addresses/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteAddress(@Positive @PathVariable int countryId, @Positive @PathVariable int stateId, @Positive @PathVariable int cityId,
 			@Positive @PathVariable int id) {
 		try {

@@ -63,6 +63,9 @@ public class Career {
 	@ManyToMany
 	@JoinTable(joinColumns = {@JoinColumn(name = "career_id")}, inverseJoinColumns = {@JoinColumn(name = "course_id")})
 	private Set<Course> course = new HashSet<Course>();
+	
+	@ManyToMany(mappedBy = "career")
+	private Set<Student> student = new HashSet<Student>();
 
 	public Career() {
 	}

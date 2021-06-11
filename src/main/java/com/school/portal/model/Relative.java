@@ -1,52 +1,33 @@
 package com.school.portal.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
-
-enum Relationship{
-	FATHER, MOTHER, AUNT, UNCLE, GRANDMOTHER, GRANDFATHER, TUTOR, OTHER;
-}
 
 @Entity
 public class Relative extends Person {
-	
+
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "student_id", referencedColumnName = "person_id")
-	private Student student;
-	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Relationship relationship;
+	@OneToMany(mappedBy = "student")
+	private Set<RelativeStudent> student = new HashSet<>();
 
 	public Relative() {
 	}
 
-	public Student getStudent() {
+	public Set<RelativeStudent> getStudent() {
 		return student;
 	}
 
-	public void setStudent(Student student) {
+	public void setStudent(Set<RelativeStudent> student) {
 		this.student = student;
 	}
 
-	public Relationship getRelationship() {
-		return relationship;
+	public void addStudent(RelativeStudent student) {
+		this.student.add(student);
 	}
 
-	public void setRelationship(Relationship relationship) {
-		this.relationship = relationship;
-	}
-
-	@Override
-	public String toString() {
-		return "Relative [" + super.toString() + "relationship=" + relationship + "]";
-	}
-		
 }

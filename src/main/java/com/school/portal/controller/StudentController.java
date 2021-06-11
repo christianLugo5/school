@@ -1,6 +1,5 @@
 package com.school.portal.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,7 +12,8 @@ import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -61,19 +61,10 @@ public class StudentController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<CollectionModel<EntityModel<Student>>> all(@RequestParam(required = false, defaultValue = "0") Integer pageNumber, 
-			@RequestParam(required = false, defaultValue = "50") Integer elements){
-		List<EntityModel<Student>> students = repository.findByOrderByNameAsc(PageRequest.of(pageNumber, elements))
-				.stream().map(obj -> (Student) obj).map(assembler::toModel).collect(Collectors.toList());
-		return ResponseEntity.ok(CollectionModel.of(students, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class)
-						.all(pageNumber, elements)).withSelfRel()));
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<EntityModel<Student>> one(@Positive @PathVariable int id) {
-		Student student = repository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found " + id));
-		return ResponseEntity.ok(assembler.toModel(student));		
+	public ResponseEntity<CollectionModel<EntityModel<Student>>> all() {
+		List<EntityModel<Student>> students = repository.findAll().stream().map(assembler::toModel).collect(Collectors.toList());
+		return ResponseEntity.ok(CollectionModel.of(students,
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class).all()).withSelfRel()));
 	}
 	
 	@GetMapping(params = "name")
@@ -93,6 +84,27 @@ public class StudentController {
 				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class)
 						.allLikeByName(lastName)).withSelfRel()));
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<EntityModel<Student>> one(@Positive @PathVariable int id) {
+		Student student = repository.findById(id).orElseThrow();
+		return ResponseEntity.ok(assembler.toModel(student));		
+	}
+	
+	@GetMapping("/teachers/{id}")
+	public ResponseEntity<CollectionModel<EntityModel<Student>>> allByTeacher(@PathVariable int id){
+		List<EntityModel<Student>> students = repository.findAllStudentByCourseStudentCourseTeacherTeacherId(id)
+				.stream().map(assembler::toModel).collect(Collectors.toList());
+		return ResponseEntity.ok(CollectionModel.of(students, 
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(StudentController.class)
+						.allByTeacher(id)).withSelfRel()));
+	}
+	
+	@GetMapping("/page")
+	public Page<Student> all(Pageable page){		
+		return repository.findAll(page);
+	}
+	
 	
 	@PostMapping
 	public ResponseEntity<?> newStudent(@Valid @RequestBody Student newStudent) {
