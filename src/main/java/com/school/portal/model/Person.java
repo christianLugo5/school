@@ -2,6 +2,7 @@ package com.school.portal.model;
 
 import java.time.LocalDate;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,6 +28,7 @@ enum BloodType {
 }
 
 @Entity
+@DiscriminatorColumn(name = "person_type")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
 

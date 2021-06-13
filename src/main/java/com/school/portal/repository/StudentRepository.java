@@ -13,7 +13,7 @@ import com.school.portal.model.Student;
 
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 	
-	public List<Student> findAllByOrderByNameAsc();
+	public List<PagedModel<Student>> findAllByOrderByNameAsc();
 
 	public List<Student> findAllByOrderByNameAsc(Pageable page);
 	
@@ -32,5 +32,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 	
 	@Query("SELECT s FROM Student s LEFT JOIN FETCH s.address LEFT JOIN FETCH s.relative LEFT JOIN FETCH s.career WHERE s.id = ?1")
 	public Optional<Student> findById(Integer id);
+	
+	public List<Student> findAllStudentByCourseStudentCourseTeacherTeacherId(int id);
 	
 }

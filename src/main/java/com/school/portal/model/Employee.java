@@ -19,7 +19,6 @@ enum EducationalAttainment {
 }
 
 @Entity
-@DiscriminatorColumn(name = "person_type")
 @DiscriminatorValue("E")
 public class Employee extends Person {
 
