@@ -202,11 +202,9 @@ CREATE TABLE `career_course` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `course_subject` (
-  `link_id` int unsigned NOT NULL AUTO_INCREMENT,
   `course_id` int unsigned NOT NULL,
   `subject_id` int unsigned NOT NULL,
-  PRIMARY KEY (`link_id`),
-  UNIQUE KEY `id_link_UNIQUE` (`link_id`),
+  PRIMARY KEY (`course_id`,`subject_id`),
   KEY `coursesubject.id_course__course.id_course_idx` (`course_id`),
   KEY `coursesubject.id_subject__subject.id_subject_idx` (`subject_id`),
   CONSTRAINT `coursesubject.course_id__course.course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
@@ -343,12 +341,23 @@ CREATE TABLE `student_course_payment_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `relative` (
-  `person_id` int unsigned NOT NULL,
+  `person_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(25) NOT NULL,
+  PRIMARY KEY (`person_id`),
+  UNIQUE KEY `person_id_UNIQUE` (`person_id`),
+  CONSTRAINT `relative.person_id__person.person_id` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `relative_student` (
+  `link_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `relative_id` int unsigned NOT NULL,
   `student_id` int unsigned NOT NULL,
   `relationship` enum('FATHER','MOTHER','AUNT','UNCLE','GRANDMOTHER','GRANDFATHER','TUTOR','OTHER') NOT NULL,
-  PRIMARY KEY (`person_id`),
-  UNIQUE KEY `relative.person_id__relative.student_id_UNIQUE` (`person_id`,`student_id`),
-  KEY `relative.student_id__student.person_fk_idx` (`student_id`),
-  CONSTRAINT `relative.person_id__person.person_id` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`),
-  CONSTRAINT `relative.student_id__student.person_id` FOREIGN KEY (`student_id`) REFERENCES `student` (`person_id`)
+  PRIMARY KEY (`link_id`),
+  UNIQUE KEY `relative_student.student_id__relative_student.relative_id_UNIQUE` (`relative_id`,`student_id`),
+  UNIQUE KEY `link_id_UNIQUE` (`link_id`),
+  KEY `relative_student.relative_id__relative.person_id_idx` (`relative_id`) /*!80000 INVISIBLE */,
+  KEY `relative_student.student_id__student.person_id_idx` (`student_id`),
+  CONSTRAINT `relative_student.relative_id__relative.person_id` FOREIGN KEY (`relative_id`) REFERENCES `relative` (`person_id`),
+  CONSTRAINT `relative_student.student_id__student.person_id` FOREIGN KEY (`student_id`) REFERENCES `student` (`person_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
